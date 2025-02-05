@@ -4,14 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import { Link } from 'react-router-dom';
 import LoadingIndicator from "../components/LoadingIndicator";
-import '../styles/Sign.css'; // Assurez-vous de créer ce fichier CSS
+import '../styles/Sign.css';
 
 const Login = ({ route, method }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
 
   const name = method === "login" ? "Login" : "Register";
 
@@ -20,26 +19,25 @@ const Login = ({ route, method }) => {
     e.preventDefault();
 
     try {
-        const res = await api.post(route, { username, password })
-        if (method === "login") {
-            localStorage.setItem(ACCESS_TOKEN, res.data.access);
-            localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-            navigate("/")
-        } else {
-            navigate("/login")
-        }
+      const res = await api.post(route, { username, password });
+      if (method === "login") {
+        localStorage.setItem(ACCESS_TOKEN, res.data.access);
+        localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+        navigate("/");
+      } else {
+        navigate("/login");
+      }
     } catch (error) {
-        alert(error)
+      alert(error);
     } finally {
-        setLoading(false)
+      setLoading(false);
     }
-};
-
+  };
 
   return (
     <div className="login-container">
       <div className="login-form">
-        <h2>Connexion</h2>
+        <h2>{name}</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-inputs">
             <input
@@ -50,10 +48,9 @@ const Login = ({ route, method }) => {
             />
             <input
               type="password"
-              name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Mot de passe"
+              placeholder="Password"
             />
           </div>
           {loading && <LoadingIndicator />}
@@ -62,7 +59,7 @@ const Login = ({ route, method }) => {
           </div>
         </form>
         <div className="form-links">
-          <Link to="/register">Créer un compte</Link>
+          <Link to="/register">Create an account</Link>
         </div>
       </div>
     </div>

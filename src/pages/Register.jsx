@@ -1,27 +1,47 @@
 import React, { useState } from 'react';
-import '../styles/Sign.css'; // Assurez-vous de créer ce fichier CSS
+import { useNavigate } from 'react-router-dom';
+import api from '../api';
+import LoadingIndicator from '../components/LoadingIndicator';
+import '../styles/Sign.css';
 
-const Login = () => {
+const Register = () => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    first_name: '',
+    last_name: '',
+    username: '',
     email: '',
     password: '',
     passwordConfirmation: '',
-    country: '',
-    city: '',
-    address: '',
-    postalCode: ''
   });
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Logique de soumission du formulaire
-    console.log(formData);
+    setLoading(true);
+
+    try {
+      const response = await api.post('api//user/register/', {
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (response.status === 201) {
+        navigate('/login');
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.detail || "Erreur lors de l'inscription";
+      alert(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -30,21 +50,28 @@ const Login = () => {
         <h2>Créer un compte</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-inputs">
-            <input
+          <input
               type="text"
-              name="firstName"
-              value={formData.firstName}
+              name="first_name"
+              value={formData.first_name}
               onChange={handleChange}
-              placeholder="Prénom"
+              placeholder="First name"
               required
-              autoFocus
             />
             <input
               type="text"
-              name="lastName"
-              value={formData.lastName}
+              name="last_name"
+              value={formData.last_name}
               onChange={handleChange}
-              placeholder="Nom"
+              placeholder="Last name"
+              required
+            />
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              placeholder="Nom d'utilisateur"
               required
             />
             <input
@@ -72,16 +99,16 @@ const Login = () => {
               required
             />
           </div>
+          {loading && <LoadingIndicator />}
           <div className="form-actions">
-            <button type="submit" className="button-shine">S'inscrire</button>
+            <button type="submit" className="button-shine" disabled={loading}>
+              S'inscrire
+            </button>
           </div>
         </form>
-        <div className="form-links">
-          {/* Ajoutez ici les liens supplémentaires si nécessaire */}
-        </div>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Register;

@@ -30,9 +30,15 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/login"
+          element={<Login route="/api/token/" method="login" />}
+        />
         <Route path="/logout" element={<Logout />} />
-        <Route path="/register" element={<RegisterAndLogout />} />
+        <Route
+          path="/register"
+          element={<Register route="api/user/register/" method="register" />}
+        />
         <Route path="*" element={<NotFound />}></Route>
       </Routes>
     </BrowserRouter>
