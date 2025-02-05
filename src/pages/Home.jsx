@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import '../styles/Home.css';
 
 const Home = () => {
-  // État pour l'animation de typing
   // const [currentWord, setCurrentWord] = useState('');
   const words = ['Trade', 'Discover', 'Share'];
   const [wordIndex, setWordIndex] = useState(0);
@@ -125,7 +124,7 @@ const Home = () => {
           <div className="feature-card">
             <i className="fas fa-chart-line feature-icon"></i>
             <h3>Real-time tracking</h3>
-            <p>Monitor your collection's value and market trends</p>
+            <p>Monitor your collections value and market trends</p>
           </div>
           <div className="feature-card">
             <i className="fas fa-shield-alt feature-icon"></i>
