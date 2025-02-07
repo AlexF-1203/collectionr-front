@@ -1,33 +1,32 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/Navbar.css';
+import { ACCESS_TOKEN } from '../constants';
+import logoImage from '../assets/logo_collectionr.png';
 
 const Navbar = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // À gérer avec votre système d'authentification
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const toggleUserMenu = () => {
-    setIsUserMenuOpen(!isUserMenuOpen);
-  };
-
-  const handleClickOutside = (e) => {
-    if (!e.target.closest('.user-profile')) {
-      setIsUserMenuOpen(false);
-    }
-  };
-
-  React.useEffect(() => {
-    document.addEventListener('click', handleClickOutside);
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
+  useEffect(() => {
+    const checkAuth = () => {
+      const token = localStorage.getItem(ACCESS_TOKEN);
+      setIsLoggedIn(!!token);
     };
+
+    checkAuth();
+    window.addEventListener('storage', checkAuth);
+
+    return () => window.removeEventListener('storage', checkAuth);
   }, []);
+
+  const toggleUserMenu = () => setIsUserMenuOpen(!isUserMenuOpen);
 
   return (
     <nav className="navbar">
       <div className="logo">
-        <Link to="/">
-          <img src="/logo_collectionr.png" alt="Logo" className="logo-collectionr" />
+      <Link to="/">
+      <img src={logoImage} alt="Logo" className="logo-collectionr" />
         </Link>
       </div>
 

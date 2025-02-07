@@ -1,5 +1,6 @@
 import { useState } from "react";
 import api from "../api";
+import PropTypes from 'prop-types';
 import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import { Link } from 'react-router-dom';
@@ -23,6 +24,7 @@ const Login = ({ route, method }) => {
       if (method === "login") {
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+        window.dispatchEvent(new Event('storage'));
         navigate("/");
       } else {
         navigate("/login");
@@ -64,6 +66,11 @@ const Login = ({ route, method }) => {
       </div>
     </div>
   );
+};
+
+Login.propTypes = {
+  route: PropTypes.string.isRequired,
+  method: PropTypes.oneOf(['login']).isRequired
 };
 
 export default Login;

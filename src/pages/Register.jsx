@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import LoadingIndicator from '../components/LoadingIndicator';
@@ -25,7 +25,7 @@ const Register = () => {
     setLoading(true);
 
     try {
-      const response = await api.post('api//user/register/', {
+      const response = await api.post('api/user/register/', {
         first_name: formData.first_name,
         last_name: formData.last_name,
         username: formData.username,
@@ -50,7 +50,7 @@ const Register = () => {
         <h2>Créer un compte</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-inputs">
-          <input
+            <input
               type="text"
               name="first_name"
               value={formData.first_name}
@@ -102,7 +102,7 @@ const Register = () => {
           {loading && <LoadingIndicator />}
           <div className="form-actions">
             <button type="submit" className="button-shine" disabled={loading}>
-              S'inscrire
+              S&apos;inscrire
             </button>
           </div>
         </form>

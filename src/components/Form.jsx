@@ -1,6 +1,7 @@
 import { useState } from "react";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
+import PropTypes from 'prop-types';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import "../styles/Sign.css"
 import LoadingIndicator from "./LoadingIndicator";
@@ -57,5 +58,11 @@ function Form({ route, method }) {
         </form>
     );
 }
+
+Form.propTypes = {
+  route: PropTypes.string.isRequired,
+  method: PropTypes.oneOf(['login', 'register']).isRequired
+};
+
 
 export default Form

@@ -12,11 +12,6 @@ function Logout() {
   return <Navigate to="/login" />
 }
 
-function RegisterAndLogout() {
-  localStorage.clear()
-  return <Register />
-}
-
 function App() {
   return (
     <BrowserRouter>
