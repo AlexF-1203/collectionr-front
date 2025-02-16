@@ -1,0 +1,45 @@
+.card[data-rarity="rare ultra"][data-subtypes~="v"] .card__shine {
+  background-image:
+    var(--glitter),
+    var(--glitter), 
+    radial-gradient( 
+      farthest-corner circle at var(--pointer-x) var(--pointer-y), 
+      hsla(0, 0%, 100%, 0.85) 10%, 
+      hsla(0, 0%, 100%, 0.5) 20%, 
+      hsla(0, 0%, 0%, 0.5) 120% 
+    );
+  background-size: var(--glittersize) var(--glittersize), var(--glittersize) var(--glittersize), cover;
+  background-position: 40% 45%, 55% 55%, center center;
+  background-blend-mode: color-dodge, color-burn;
+  filter: brightness(1) contrast(1.2) saturate(1.1);
+}
+
+.card[data-rarity="rare holo v"] .card__shine:before {
+  content: "";
+  background-image:
+    repeating-linear-gradient(
+      calc(var(--angle)),
+      var(--red) calc(var(--space)*1),
+      var(--yellow) calc(var(--space)*2),
+      var(--green) calc(var(--space)*3),
+      var(--blue) calc(var(--space)*4),
+      var(--violet) calc(var(--space)*5),
+      var(--red) calc(var(--space)*6)
+    );
+  background-size: 200% 200%;
+  background-position: var(--background-x) var(--background-y);
+  filter: brightness(.7) contrast(1) saturate(1.2);
+  mix-blend-mode: color-dodge;
+  opacity: 0.5;
+}
+
+.card[data-rarity="rare holo v"].masked .card__glare {
+  background-image: 
+    radial-gradient(
+      farthest-corner circle at var(--pointer-x) var(--pointer-y),
+      hsla(0, 0%, 100%, 0.8) 10%,
+      hsla(0, 0%, 100%, 0.65) 20%,
+      hsla(0, 0%, 0%, 0.5) 90%
+    );
+  mix-blend-mode: overlay;
+} 

@@ -24,8 +24,14 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
 
+    if (formData.password !== formData.passwordConfirmation) {
+      alert("Les mots de passe ne correspondent pas");
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await api.post('api/user/register/', {
+      const response = await api.post('api/users/', {
         first_name: formData.first_name,
         last_name: formData.last_name,
         username: formData.username,

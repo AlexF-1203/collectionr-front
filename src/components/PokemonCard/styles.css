@@ -1,0 +1,123 @@
+@import '../../assets/cards/index.css';
+
+:root {
+  --grain: url("/img/grain.webp");
+  --glitter: url("/img/glitter.png");
+  --glittersize: 25%;
+
+  --space: 5%;
+  --angle: 133deg;
+  --imgsize: cover;
+
+  --red: #f80e35;
+  --yellow: #eedf10;
+  --green: #21e985;
+  --blue: #0dbde9;
+  --violet: #c929f1;
+
+  --clip: inset( 9.85% 8% 52.85% 8% );
+  --clip-invert: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0 47.15%, 91.5% 47.15%, 91.5% 9.85%, 8% 9.85%, 8% 47.15%, 0 50%);
+
+  --clip-stage: polygon(91.5% 9.85%, 57% 9.85%, 54% 12%, 17% 12%, 16% 14%, 12% 16%, 8% 16%, 8% 47.15%, 92% 47.15%);
+  --clip-stage-invert: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0 47.15%, 91.5% 47.15%, 91.5% 9.85%, 57% 9.85%, 54% 12%, 17% 12%, 16% 14%, 12% 16%, 8% 16%, 8% 47.15%, 0 50%);
+
+  --clip-trainer: inset(14.5% 8.5% 48.2% 8.5%);
+  --clip-borders: inset(2.8% 4% round 2.55% / 1.5%);
+  
+}
+
+/* Structure de base de la carte */
+.card {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 1/1.4;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  transition: transform 0.2s ease-out;
+  cursor: pointer;
+}
+
+.card.interacting {
+  transform: scale(1.05);
+}
+
+.card__translater {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: 
+    rotateY(calc(var(--ry) * 1deg))
+    rotateX(calc(var(--rx) * 1deg));
+  transition: transform 0.2s ease-out;
+}
+
+.card__rotator {
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.5);
+  border-radius: var(--radius);
+}
+
+.card__front {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius);
+}
+
+/* Effets de brillance de base */
+.card__shine {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+  mix-blend-mode: color-dodge;
+  pointer-events: none;
+}
+
+.card__glare {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: radial-gradient(
+    circle at var(--mx) var(--my),
+    rgba(255, 255, 255, 0.7) 10%,
+    rgba(255, 255, 255, 0.5) 20%,
+    rgba(0, 0, 0, 0.5) 90%
+  );
+  mix-blend-mode: overlay;
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+}
+
+/* États interactifs */
+.card.interacting .card__shine,
+.card.interacting .card__glare {
+  opacity: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .card {
+    max-width: min(45vw, 200px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+}

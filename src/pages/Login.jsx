@@ -7,30 +7,24 @@ import { Link } from 'react-router-dom';
 import LoadingIndicator from "../components/LoadingIndicator";
 import '../styles/Sign.css';
 
-const Login = ({ route, method }) => {
+const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  const name = method === "login" ? "Login" : "Register";
 
   const handleSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
 
     try {
-      const res = await api.post(route, { username, password });
-      if (method === "login") {
-        localStorage.setItem(ACCESS_TOKEN, res.data.access);
-        localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-        window.dispatchEvent(new Event('storage'));
-        navigate("/");
-      } else {
-        navigate("/login");
-      }
+      const res = await api.post('api/token/', { username, password });
+      localStorage.setItem(ACCESS_TOKEN, res.data.access);
+      localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+      window.dispatchEvent(new Event('storage'));
+      navigate("/");
     } catch (error) {
-      alert(error);
+      alert(error.response?.data?.detail || "Erreur de connexion");
     } finally {
       setLoading(false);
     }
@@ -39,7 +33,7 @@ const Login = ({ route, method }) => {
   return (
     <div className="login-container">
       <div className="login-form">
-        <h2>{name}</h2>
+        <h2>Login</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-inputs">
             <input
@@ -57,7 +51,7 @@ const Login = ({ route, method }) => {
           </div>
           {loading && <LoadingIndicator />}
           <div className="form-actions">
-            <button type="submit" className="button-shine">{name}</button>
+            <button type="submit" className="button-shine">Login</button>
           </div>
         </form>
         <div className="form-links">

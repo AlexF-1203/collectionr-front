@@ -6,6 +6,8 @@ import Home from "./pages/Home"
 import NotFound from "./pages/NotFound"
 import ProtectedRoute from "./components/ProtectedRoute"
 import Navbar from './components/Navbar';
+import PokemonCollection from './components/PokemonCollection';
+
 
 function Logout() {
   localStorage.clear()
@@ -33,6 +35,14 @@ function App() {
         <Route
           path="/register"
           element={<Register route="api/user/register/" method="register" />}
+        />
+        <Route
+          path="/collection"
+          element={
+            <ProtectedRoute>
+              <PokemonCollection />
+            </ProtectedRoute>
+          }
         />
         <Route path="*" element={<NotFound />}></Route>
       </Routes>
