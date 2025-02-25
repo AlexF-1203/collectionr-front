@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import CardDetailComponent from '../components/CardDetailComponent';
+import PriceChartGradient from '../components/PriceChartGradient';
 import api from '../api';
-import CardDetailComponent from '../components/CardDetailComponent'; // Importez le composant que j'ai créé
+import '../styles/CardDetail.css';
+import '../components/TCGCard'; // Import du Web Component
 
 const CardDetail = () => {
   const { id } = useParams();
@@ -16,7 +19,6 @@ const CardDetail = () => {
         setLoading(true);
         const response = await api.get(`/api/cards/${id}/`);
         setCard(response.data);
-        setError(null);
       } catch (err) {
         console.error("Erreur lors du chargement des détails de la carte:", err);
         setError("Impossible de charger les détails de la carte.");
@@ -36,8 +38,8 @@ const CardDetail = () => {
     return (
       <div className="cards-page">
         <div className="loading-container">
-          <div className="loading-spinner"></div>
-          <p>Chargement des détails de la carte...</p>
+          <div className="loader"></div>
+          <p className="loading-text">Chargement des détails de la carte...</p>
         </div>
       </div>
     );
@@ -46,13 +48,21 @@ const CardDetail = () => {
   if (error) {
     return (
       <div className="cards-page">
-        <div className="error-message">{error}</div>
-        <button className="back-button" onClick={handleBack}>Retour à ma collection</button>
+        <div className="error-container">
+          <div className="error-icon">!</div>
+          <div className="error-message">{error}</div>
+          <button className="back-button" onClick={handleBack}>Retour à ma collection</button>
+        </div>
       </div>
     );
   }
 
-  return <CardDetailComponent card={card} onBack={handleBack} />;
+  return (
+    <>
+      <PriceChartGradient />
+      <CardDetailComponent card={card} onBack={handleBack} />
+    </>
+  );
 };
 
 export default CardDetail;

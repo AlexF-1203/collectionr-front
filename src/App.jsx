@@ -8,7 +8,8 @@ import ProtectedRoute from "./components/ProtectedRoute"
 import Navbar from './components/Navbar';
 import PokemonCollection from './components/PokemonCollection';
 import Cards from './pages/Cards';
-import CardDetail from "./components/CardDetail" 
+import CardDetail from "./pages/CardDetail" 
+import './components/TCGCard'; // Import du Web Component
 
 function Logout() {
   localStorage.clear()
