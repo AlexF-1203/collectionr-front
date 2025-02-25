@@ -1,4 +1,4 @@
-import react from "react"
+import React, { useState } from "react";  // Ajoutez l'import de useState
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
@@ -7,7 +7,9 @@ import NotFound from "./pages/NotFound"
 import ProtectedRoute from "./components/ProtectedRoute"
 import Navbar from './components/Navbar';
 import PokemonCollection from './components/PokemonCollection';
-import Cards from './pages/Cards'; // Import de la nouvelle page Cards
+import Cards from './pages/Cards';
+import CardDetail from "./pages/CardDetail" 
+import './components/TCGCard'; // Import du Web Component
 
 function Logout() {
   localStorage.clear()
@@ -49,6 +51,15 @@ function App() {
           element={
             <ProtectedRoute>
               <Cards />
+            </ProtectedRoute>
+          }
+        />
+        {/* Nouvelle route pour les détails de carte */}
+        <Route
+          path="/cards/:id"
+          element={
+            <ProtectedRoute>
+              <CardDetail />
             </ProtectedRoute>
           }
         />
