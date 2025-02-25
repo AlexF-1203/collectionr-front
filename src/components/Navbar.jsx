@@ -35,7 +35,7 @@ const Navbar = () => {
         <Link to="/collections" className="nav-item">Collection</Link>
         <Link to="/cards" className="nav-item">Card</Link>
         <Link to="/marketplace" className="nav-item">Marketplace</Link>
-        <Link to="/collection">Collection Pokémon</Link>
+        {/* <Link to="/collection">Collection Pokémon</Link> */}
       </ul>
 
       <div className="user-profile">
@@ -66,7 +66,6 @@ const Navbar = () => {
                   </Link>
                   <button
                     onClick={() => {
-                      // Votre logique de déconnexion ici
                       setIsLoggedIn(false);
                     }}
                     className="dropdown-item dropdown-item-danger"
