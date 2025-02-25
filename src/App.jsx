@@ -7,7 +7,7 @@ import NotFound from "./pages/NotFound"
 import ProtectedRoute from "./components/ProtectedRoute"
 import Navbar from './components/Navbar';
 import PokemonCollection from './components/PokemonCollection';
-
+import Cards from './pages/Cards'; // Import de la nouvelle page Cards
 
 function Logout() {
   localStorage.clear()
@@ -17,7 +17,7 @@ function Logout() {
 function App() {
   return (
     <BrowserRouter>
-    <Navbar />
+      <Navbar />
       <Routes>
         <Route
           path="/"
@@ -41,6 +41,14 @@ function App() {
           element={
             <ProtectedRoute>
               <PokemonCollection />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/cards"
+          element={
+            <ProtectedRoute>
+              <Cards />
             </ProtectedRoute>
           }
         />
