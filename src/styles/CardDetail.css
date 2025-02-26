@@ -72,9 +72,13 @@
 
 /* ====== SECTION IMAGE ====== */
 .card-image-container {
-  position: relative;
-  perspective: 1000px;
   width: 100%;
+  max-width: 340px;
+  aspect-ratio: 0.71;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
 }
 
 /* Utiliser ces styles uniquement si l'image est affichée sans le Web Component */
@@ -147,6 +151,16 @@ tcg-card {
   gap: 10px;
   border-bottom: 2px solid rgba(255, 143, 63, 0.3);
   padding-bottom: 10px;
+}
+
+.card-info-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* Ajoute de l'espace entre les éléments enfants */
+  padding: 16px; /* Ajoute du padding autour du conteneur */
+  width: 100%;
+  max-width: 600px; /* Limite la largeur pour un meilleur contrôle de la mise en page */
+  margin: 0 auto; /* Centre le conteneur */
 }
 
 /* ====== GRAPHIQUE PRIX ====== */
