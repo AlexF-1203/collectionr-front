@@ -10,6 +10,7 @@ import PokemonCollection from './components/PokemonCollection';
 import Cards from './pages/Cards';
 import CardDetail from "./pages/CardDetail" 
 import './components/TCGCard'; // Import du Web Component
+import './styles/TCGCard.css';
 
 function Logout() {
   localStorage.clear()

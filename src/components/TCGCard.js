@@ -4,6 +4,8 @@ class TCGCard extends HTMLElement {
   constructor() {
     super();
     const template = document.createElement("template");
+    const imgSrc = this.getAttribute("src") || 'https://via.placeholder.com/245x342?text=Pokemon+Card&bg=transparent';
+console.log("TCGCard - Image source:", imgSrc);
     template.innerHTML = `
       <style>
         :host {
@@ -112,9 +114,7 @@ class TCGCard extends HTMLElement {
         <div class="tcg-proxy">
         </div>
         <button class="tcg-display">
-          <img class="tcg-card" src="${this.getAttribute(
-            "src",
-          )}" alt="${this.getAttribute("alt") || "Pokemon card"}" loading="lazy">
+          <img class="tcg-card" src="${imgSrc}" alt="${this.getAttribute("alt") || "Pokemon card"}" loading="lazy">
           <div class="tcg-shine"></div>
           <div class="tcg-glare"></div>
         </button>
@@ -422,6 +422,11 @@ class TCGCard extends HTMLElement {
   handleDocumentKeydown(e) {
     this.close();
   }
+}
+
+// Définir le composant web personnalisé
+if (!customElements.get('tcg-card')) {
+  customElements.define('tcg-card', TCGCard);
 }
 
 // Exporter la classe TCGCard pour pouvoir l'utiliser comme un module

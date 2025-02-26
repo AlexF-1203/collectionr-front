@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/CardDetail.css';
+import '../components/TCGCard'; // Import du Web Component
 
 const CardDetailComponent = ({ card, onBack = () => {} }) => {
+  console.log("Card in detail component:", card); // Ajout pour le débogage
   const [priceHistory, setPriceHistory] = useState([]);
 
   // Générer des données d'historique de prix pour la démo
@@ -61,19 +63,23 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
 
   // Afficher une carte à partir de l'URL de l'image
   const getImageUrl = (card) => {
+    console.log("Card data for image:", card);
     if (!card) return 'https://via.placeholder.com/245x342?text=Pokemon+Card&bg=transparent';
     
-    if (card.image_url) {
+    if (card.image_url && card.image_url !== 'null') {
+      console.log("Using image_url:", card.image_url);
       return card.image_url;
     }
     
     if (card.set_id && card.number) {
-      return `https://images.pokemontcg.io/${card.set_id}/${card.number}_hires.png`;
+      const url = `https://images.pokemontcg.io/${card.set_id}/${card.number}_hires.png`;
+      console.log("Using generated URL:", url);
+      return url;
     }
     
+    console.log("Using placeholder image");
     return 'https://via.placeholder.com/245x342?text=Pokemon+Card&bg=transparent';
   };
-
   // Formater la date
   const formatDate = (dateString) => {
     if (!dateString) return "Date inconnue";
@@ -130,23 +136,10 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
         <div className="card-detail-content">
           {/* Section de l'image avec effet 3D */}
           <div className="card-image-container">
-            {card.image_url ? (
-              <tcg-card 
-                src={getImageUrl(card)} 
-                alt={card.name || 'Carte Pokémon'}
-              ></tcg-card>
-            ) : (
-              <div className="card-image-wrapper">
-                <img 
-                  src={getImageUrl(card)} 
-                  alt={card.name || 'Carte Pokémon'}
-                  className="card-detail-image"
-                  onError={(e) => {
-                    e.target.src = 'https://via.placeholder.com/245x342?text=Pokemon+Card&bg=transparent';
-                  }}
-                />
-              </div>
-            )}
+            <tcg-card 
+              src={getImageUrl(card)} 
+              alt={card.name || 'Carte Pokémon'}
+            ></tcg-card>
           </div>
           
           {/* Section des informations */}

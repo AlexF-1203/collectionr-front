@@ -125,19 +125,18 @@
 
 /* Style pour le Web Component TCGCard */
 tcg-card {
-  display: block;
-  width: 100%;
-  height: auto;
+  display: block !important;
+  width: 100% !important;
+  height: 450px !important; /* Forcer une hauteur explicite */
   margin: 0 auto;
 }
 
-/* ====== SECTION INFORMATION ====== */
-.card-info-container {
+.card-image-container {
+  min-height: 450px; /* S'assurer que le conteneur a une hauteur minimum */
   display: flex;
-  flex-direction: column;
-  gap: 25px;
+  justify-content: center;
+  align-items: center;
 }
-
 .section-title {
   font-size: 1.5rem;
   color: var(--text-primary);

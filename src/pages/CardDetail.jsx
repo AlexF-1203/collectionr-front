@@ -6,6 +6,13 @@ import api from '../api';
 import '../styles/CardDetail.css';
 import '../components/TCGCard'; // Import du Web Component
 
+// Force l'enregistrement du composant web s'il n'est pas déjà défini
+if (!customElements.get('tcg-card')) {
+  import('../components/TCGCard').then(() => {
+    console.log('TCGCard custom element registered in CardDetail');
+  });
+}
+
 const CardDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -18,19 +25,16 @@ const CardDetail = () => {
       try {
         setLoading(true);
         const response = await api.get(`/api/cards/${id}/`);
+        console.log("Card data fetched:", response.data); // Log pour le débogage
         setCard(response.data);
       } catch (err) {
         console.error("Erreur lors du chargement des détails de la carte:", err);
-        if (err.response && err.response.status === 401) {
-          setError("Session expirée, veuillez vous reconnecter.");
-        } else {
-          setError("Impossible de charger les détails de la carte.");
-        }
+        setError("Impossible de charger les détails de la carte.");
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchCardDetails();
   }, [id]);
 
