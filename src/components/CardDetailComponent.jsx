@@ -5,29 +5,24 @@ import TCGCard from './TCGCard';
 const CardDetailComponent = ({ card, onBack = () => {} }) => {
   const [priceHistory, setPriceHistory] = useState([]);
 
-  // Générer des données d'historique de prix pour la démo
   useEffect(() => {
     if (!card) return;
 
     const generatePriceHistoryData = () => {
       const today = new Date();
       const data = [];
-      // Déterminer le prix de base à partir de la carte ou utiliser une valeur par défaut
       const basePrice = card.price?.amount
         ? parseFloat(card.price.amount)
         : 2.50;
 
       let currentPrice = basePrice;
 
-      // Générer 30 jours de données
       for (let i = 30; i >= 0; i--) {
         const date = new Date(today);
         date.setDate(today.getDate() - i);
 
-        // Variation plus réaliste pour créer un graphique plus intéressant
-        // Ajouter un peu de volatilité aléatoire et une tendance générale
-        const randomFactor = Math.random() * 0.2 - 0.1; // -10% à +10%
-        const trendFactor = Math.sin(i / 5) * 0.05; // Tendance sinusoïdale
+        const randomFactor = Math.random() * 0.2 - 0.1;
+        const trendFactor = Math.sin(i / 5) * 0.05;
 
         const dailyChange = currentPrice * (randomFactor + trendFactor);
         currentPrice = Math.max(0.1, currentPrice + dailyChange);
@@ -44,7 +39,6 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
     generatePriceHistoryData();
   }, [card]);
 
-  // Afficher une carte à partir de l'URL de l'image
   const getImageUrl = (card) => {
     if (!card) return '';
 
@@ -58,8 +52,6 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
 
     return '';
   };
-
-  // Si pas de carte, afficher un message
   if (!card) {
     return (
       <div className="cards-page">
@@ -86,7 +78,6 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
           </div>
 
           <div className="card-info-container">
-            {/* Graphique de l'évolution des prix */}
             <div className="price-history-card">
               <h2 className="section-title">
                 Prix évolution (30j)
