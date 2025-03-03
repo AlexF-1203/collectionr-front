@@ -11,6 +11,7 @@
   --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.4);
   --transition-speed: 0.3s;
   --border-radius: 15px;
+  --chart-line-color: #ffd700;
 }
 
 /* ====== LAYOUT GÉNÉRAL ====== */
@@ -43,12 +44,11 @@
   margin-bottom: 40px;
 }
 
-/* ====== BOUTON RETOUR ====== */
 .back-button {
   display: inline-flex;
   align-items: center;
   padding: 10px 20px;
-  margin-bottom: 30px;
+  margin-bottom: -50px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-light);
   color: var(--text-primary);
@@ -73,12 +73,13 @@
 /* ====== SECTION IMAGE ====== */
 .card-image-container {
   width: 100%;
-  max-width: 340px;
+  max-width: 440px;
   aspect-ratio: 0.71;
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 0 auto;
+  min-height: 450px;
 }
 
 /* Utiliser ces styles uniquement si l'image est affichée sans le Web Component */
@@ -131,16 +132,10 @@
 tcg-card {
   display: block !important;
   width: 100% !important;
-  height: 450px !important; /* Forcer une hauteur explicite */
+  height: 450px !important;
   margin: 0 auto;
 }
 
-.card-image-container {
-  min-height: 450px; /* S'assurer que le conteneur a une hauteur minimum */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 .section-title {
   font-size: 1.5rem;
   color: var(--text-primary);
@@ -156,17 +151,17 @@ tcg-card {
 .card-info-container {
   display: flex;
   flex-direction: column;
-  gap: 16px; /* Ajoute de l'espace entre les éléments enfants */
-  padding: 16px; /* Ajoute du padding autour du conteneur */
+  gap: 16px;
+  padding: 2px;
   width: 100%;
-  max-width: 600px; /* Limite la largeur pour un meilleur contrôle de la mise en page */
-  margin: 0 auto; /* Centre le conteneur */
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-/* ====== GRAPHIQUE PRIX ====== */
+/* ====== GRAPHIQUE PRIX AMÉLIORÉ ====== */
 .price-history-card {
   background: var(--card-bg-gradient);
-  padding: 25px;
+  padding: 30px;
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-normal);
   border: 1px solid var(--border-light);
@@ -181,52 +176,68 @@ tcg-card {
 
 .price-chart-container {
   position: relative;
-  height: 200px;
+  height: 220px;
   margin-top: 20px;
 }
 
 .price-chart {
   position: relative;
   width: 100%;
+  height: 200px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 20px;
+}
+
+/* Grille de fond raffinée */
+.price-chart-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
   height: 100%;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 0;
 }
 
-.price-point {
+.grid-line {
   position: absolute;
-  width: 8px;
-  height: 8px;
-  background: #FF8F3F;
-  border-radius: 50%;
-  bottom: 0;
-  transform: translate(-50%, 50%);
-  cursor: pointer;
-  z-index: 2;
-  transition: all 0.2s ease;
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
-.price-point:hover {
-  background: #F8B622;
-  width: 12px;
-  height: 12px;
-  box-shadow: 0 0 15px rgba(255, 143, 63, 0.7);
+.grid-line.horizontal {
+  width: 100%;
+  height: 1px;
+  left: 0;
 }
 
-.price-point:hover::after {
-  content: attr(data-price) " (" attr(data-date) ")";
-  position: absolute;
-  top: -40px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(20, 20, 30, 0.9);
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 12px;
-  white-space: nowrap;
-  color: #fff;
-  z-index: 10;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+.grid-line.horizontal:nth-child(1) {
+  top: 25%;
+}
+
+.grid-line.horizontal:nth-child(2) {
+  top: 50%;
+}
+
+.grid-line.horizontal:nth-child(3) {
+  top: 75%;
+}
+
+.grid-line.vertical {
+  width: 1px;
+  height: 100%;
+  top: 0;
+}
+
+.grid-line.vertical:nth-child(4) {
+  left: 33.33%;
+}
+
+.grid-line.vertical:nth-child(5) {
+  left: 66.66%;
+}
+
+.grid-line.vertical:nth-child(6) {
+  right: 0;
 }
 
 .price-line {
@@ -238,35 +249,105 @@ tcg-card {
   z-index: 1;
 }
 
-.price-line polyline {
-  fill: none;
-  stroke: url(#gradient-line);
-  stroke-width: 3;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  filter: drop-shadow(0 0 3px rgba(255, 143, 63, 0.5));
+/* Points de données */
+.data-point {
+  transition: r 0.3s ease;
+}
+
+.data-point-group:hover .data-point {
+  r: 2;
+  fill: #F8B622;
+  filter: drop-shadow(0 0 5px rgba(255, 143, 63, 0.8));
+}
+
+.data-point-hover {
+  cursor: pointer;
+}
+
+/* Tooltip élégant */
+.price-tooltip {
+  position: absolute;
+  opacity: 0;
+  visibility: hidden;
+  background: rgba(30, 30, 40, 0.95);
+  border: 1px solid rgba(255, 143, 63, 0.5);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #fff;
+  z-index: 10;
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  min-width: 120px;
+  text-align: center;
+}
+
+.price-tooltip::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid rgba(255, 143, 63, 0.5);
+}
+
+.tooltip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tooltip-day, .tooltip-price {
+  font-size: 0.8rem;
+}
+
+.tooltip-price span {
+  font-weight: bold;
+  color: #F8B622;
 }
 
 .price-chart-labels {
   display: flex;
   justify-content: space-between;
-  margin-top: 15px;
   color: var(--text-secondary);
   font-size: 0.8rem;
   padding: 0 5px;
+  margin-top: 5px;
 }
 
 .price-range {
   position: absolute;
-  left: -5px;
+  left: -50px;
   top: 0;
-  height: 100%;
+  height: 160px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   color: var(--text-secondary);
   font-size: 0.8rem;
-  padding: 10px 0;
+  padding: 0;
+}
+
+/* Animation douce pour la courbe */
+@keyframes drawLine {
+  from {
+    stroke-dashoffset: 500;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.price-line polyline {
+  stroke-dasharray: 500;
+  stroke-dashoffset: 0;
+  animation: drawLine 2s ease-out forwards;
 }
 
 .no-data-message {
@@ -349,62 +430,6 @@ tcg-card {
   line-height: 1.6;
 }
 
-/* ====== SVG GRADIENTS ====== */
-#gradient-line {
-  --color-start: #FF8F3F;
-  --color-end: #F8B622;
-}
-
-/* ====== RESPONSIVE ====== */
-@media (max-width: 991px) {
-  .card-detail-content {
-    grid-template-columns: 1fr;
-  }
-  
-  .stats-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .card-detail-wrapper {
-    padding: 20px 0;
-  }
-  
-  .card-detail-title {
-    font-size: 2rem;
-  }
-  
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 480px) {
-  .card-detail-container {
-    padding: 0 15px;
-  }
-  
-  .card-detail-title {
-    font-size: 1.8rem;
-  }
-  
-  .section-title {
-    font-size: 1.3rem;
-  }
-}
-
-/* ====== ANIMATIONS ====== */
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-.price-point:hover {
-  animation: pulse 1.5s infinite;
-}
-
 /* ====== LOADER ====== */
 .loading-container {
   display: flex;
@@ -477,4 +502,76 @@ tcg-card {
   background: rgba(255, 95, 95, 0.1);
   border-radius: 10px;
   border: 1px solid rgba(255, 95, 95, 0.3);
+}
+
+/* ====== ANIMATIONS ====== */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.price-point:hover {
+  animation: pulse 1.5s infinite;
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 991px) {
+  .card-detail-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .price-range {
+    left: -40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .card-detail-wrapper {
+    padding: 20px 0;
+  }
+  
+  .card-detail-title {
+    font-size: 2rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .price-chart-container {
+    height: 200px;
+  }
+  
+  .price-chart {
+    height: 140px;
+  }
+  
+  .price-range {
+    height: 140px;
+    left: -35px;
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-detail-container {
+    padding: 0 15px;
+  }
+  
+  .card-detail-title {
+    font-size: 1.8rem;
+  }
+  
+  .section-title {
+    font-size: 1.3rem;
+  }
+  
+  .price-history-card {
+    padding: 20px;
+  }
 }
