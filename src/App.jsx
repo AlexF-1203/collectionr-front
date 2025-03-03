@@ -1,4 +1,4 @@
-import React, { useState } from "react";  // Ajoutez l'import de useState
+import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
@@ -8,9 +8,11 @@ import ProtectedRoute from "./components/ProtectedRoute"
 import Navbar from './components/Navbar';
 import PokemonCollection from './components/PokemonCollection';
 import Cards from './pages/Cards';
-import CardDetail from "./pages/CardDetail" 
+import CardDetail from "./pages/CardDetail"
 import './components/TCGCard'; // Import du Web Component
 import './styles/TCGCard.css';
+import ProfileComponent from './components/ProfileComponent';
+import { ACCESS_TOKEN } from './constants';
 
 function Logout() {
   localStorage.clear()
@@ -18,6 +20,37 @@ function Logout() {
 }
 
 function App() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // Récupérer les informations de l'utilisateur au chargement
+    const fetchUserData = async () => {
+      const token = localStorage.getItem(ACCESS_TOKEN);
+      if (token) {
+        try {
+          const response = await fetch('/api/user/profile/', {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          });
+          if (response.ok) {
+            const userData = await response.json();
+            setUser(userData);
+          } else {
+            console.error('Erreur de réponse:', response.status);
+            localStorage.removeItem(ACCESS_TOKEN);
+          }
+        } catch (error) {
+          console.error('Erreur lors de la récupération des données utilisateur:', error);
+          localStorage.removeItem(ACCESS_TOKEN);
+        }
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
   return (
     <BrowserRouter>
       <Navbar />
@@ -55,7 +88,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-        {/* Nouvelle route pour les détails de carte */}
         <Route
           path="/cards/:id"
           element={
@@ -64,7 +96,15 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="*" element={<NotFound />}></Route>
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfileComponent user={user} />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   )
