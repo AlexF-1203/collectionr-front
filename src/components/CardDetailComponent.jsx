@@ -12,7 +12,6 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
       const dailyPrices = card.prices[0].daily_price;
       const data = [];
 
-      // Parcourir les 30 jours dans l'ordre inverse (du plus ancien au plus récent)
       for (let i = 30; i >= 1; i--) {
         const price = dailyPrices[`day_${i}`];
         if (price !== undefined) {

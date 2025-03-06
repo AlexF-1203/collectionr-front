@@ -4,9 +4,9 @@ import CardDetailComponent from '../components/CardDetailComponent';
 import PriceChartGradient from '../components/PriceChartGradient';
 import api from '../api';
 import '../styles/CardDetail.css';
-import '../components/TCGCard'; // Import du Web Component
+import '../components/TCGCard';
 
-// Force l'enregistrement du composant web s'il n'est pas déjà défini
+
 if (!customElements.get('tcg-card')) {
   import('../components/TCGCard').then(() => {
     console.log('TCGCard custom element registered in CardDetail');
@@ -25,7 +25,7 @@ const CardDetail = () => {
       try {
         setLoading(true);
         const response = await api.get(`/api/cards/${id}/`);
-        console.log("Card data fetched:", response.data); // Log pour le débogage
+        console.log("Card data fetched:", response.data);
         setCard(response.data);
       } catch (err) {
         console.error("Erreur lors du chargement des détails de la carte:", err);

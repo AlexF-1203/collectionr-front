@@ -13,10 +13,12 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Gestion soumission formulaire de connexion
   const handleSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
 
+    // Essaie de se connecter
     try {
       const res = await api.post('api/token/', { username, password });
       localStorage.setItem(ACCESS_TOKEN, res.data.access);

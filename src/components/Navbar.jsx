@@ -22,6 +22,12 @@ const Navbar = () => {
 
   const toggleUserMenu = () => setIsUserMenuOpen(!isUserMenuOpen);
 
+  const handleLogout = () => {
+    localStorage.removeItem(ACCESS_TOKEN);
+    setIsLoggedIn(false);
+    window.location.href = "/login";
+  };
+
   return (
     <nav className="navbar">
       <div className="logo">
@@ -32,10 +38,9 @@ const Navbar = () => {
 
       <ul className="nav-links">
         <Link to="/" className="nav-item">Home</Link>
-        <Link to="/collections" className="nav-item">Collection</Link>
+        <Link to="/collection" className="nav-item">Collection</Link>
         <Link to="/cards" className="nav-item">Card</Link>
         <Link to="/marketplace" className="nav-item">Marketplace</Link>
-        {/* <Link to="/collection">Collection Pokémon</Link> */}
       </ul>
 
       <div className="user-profile">
@@ -52,22 +57,20 @@ const Navbar = () => {
 
               {isUserMenuOpen && (
                 <div className="profile-dropdown">
-                  <Link to="/profile" className="dropdown-item">
+                  <Link to="/profile" className="dropdown-item" onClick={() => setIsUserMenuOpen(false)}>
                     <i className="fa-solid fa-user"></i> User Profile
                   </Link>
-                  <Link to="/create-offer" className="dropdown-item">
+                  <Link to="/create-offer" className="dropdown-item" onClick={() => setIsUserMenuOpen(false)}>
                     <i className="fa-solid fa-shop"></i> Create Offer
                   </Link>
-                  <Link to="/purchases" className="dropdown-item">
-                    <i className="fa-solid fa-gear"></i> My Purchases
+                  <Link to="/purchases" className="dropdown-item" onClick={() => setIsUserMenuOpen(false)}>
+                    <i className="fa-solid fa-bag-shopping"></i> My Purchases
                   </Link>
-                  <Link to="/settings" className="dropdown-item">
+                  <Link to="/settings" className="dropdown-item" onClick={() => setIsUserMenuOpen(false)}>
                     <i className="fa-solid fa-gear"></i> Settings
                   </Link>
                   <button
-                    onClick={() => {
-                      setIsLoggedIn(false);
-                    }}
+                    onClick={handleLogout}
                     className="dropdown-item dropdown-item-danger"
                   >
                     <i className="fa-solid fa-right-from-bracket"></i> Log Out

@@ -4,9 +4,6 @@ import api from '../api';
 import LoadingIndicator from '../components/LoadingIndicator';
 import { useNavigate } from 'react-router-dom';
 
-/**
- * Page d'affichage des cartes Pokémon de la collection
- */
 const Cards = () => {
   const navigate = useNavigate();
   const [cards, setCards] = useState([]);
@@ -25,24 +22,18 @@ const Cards = () => {
     navigate(`/cards/${card.id}`);
   };
 
-  // Nombre de cartes par page: 6 cartes par ligne, 5 lignes
   const cardsPerPage = 30;
 
-  // Stocker toutes les cartes pour la pagination locale
   const [allCards, setAllCards] = useState([]);
-  
-  // État pour stocker les sets disponibles
+
   const [availableSets, setAvailableSets] = useState([]);
-  
-  // Fonction pour le débogage
+
   const logCardInfo = (cards) => {
     if (!cards || cards.length === 0) return;
-    
-    // Afficher les 5 premières cartes pour le débogage
+
     const sampleCards = cards.slice(0, 5);
     console.log("Échantillon de cartes:", sampleCards);
-    
-    // Collecter toutes les propriétés des cartes pour comprendre leur structure
+
     const allProperties = new Set();
     sampleCards.forEach(card => {
       if (card) {
@@ -51,8 +42,7 @@ const Cards = () => {
     });
     
     console.log("Toutes les propriétés disponibles:", Array.from(allProperties));
-    
-    // Collecter tous les sets uniques pour le débogage
+
     const uniqueSets = new Set();
     cards.forEach(card => {
       if (card && card.set_name) uniqueSets.add(card.set_name);
@@ -62,30 +52,30 @@ const Cards = () => {
     console.log("Sets uniques trouvés:", Array.from(uniqueSets));
   };
 
-  // Extraire tous les sets uniques
+  // Extrait set unique
   const extractAllSets = (cardsData) => {
     if (!cardsData || !Array.isArray(cardsData) || cardsData.length === 0) {
       return [];
     }
     
-    // Enregistrer toutes les occurrences de set
+    // Enregistre tous les sets 
     const sets = [];
     const seenSets = new Set();
     
     cardsData.forEach(card => {
       if (!card) return;
       
-      // Recueillir toutes les informations possibles de set
+      // Récupérer toutes les information de set
       const possibleSetIds = [
         card.set_id,
         card.set,
         card.setCode,
         card.set_code
-      ].filter(Boolean); // Filtrer les valeurs null/undefined
+      ].filter(Boolean); // Supp les null/undefined
       
       const setName = card.set_name || card.setName || "Set inconnu";
       
-      // Si nous avons un ID de set
+      // Ajoute le set par l'id
       if (possibleSetIds.length > 0) {
         possibleSetIds.forEach(id => {
           if (id && !seenSets.has(id)) {
@@ -94,14 +84,14 @@ const Cards = () => {
           }
         });
       } 
-      // Si nous n'avons que le nom du set
+      // Ajoute le set par le name
       else if (setName && !seenSets.has(setName)) {
         seenSets.add(setName);
         sets.push({ id: setName, name: setName });
       }
     });
     
-    // Filtrer les doublons et trier
+    // Filtre doublons + trie
     return sets
       .filter((set, index, self) => 
         index === self.findIndex(s => s.id === set.id)
@@ -109,7 +99,7 @@ const Cards = () => {
       .sort((a, b) => a.name.localeCompare(b.name));
   };
 
-  // Charger toutes les cartes et extraire les sets disponibles
+  // Charge les cartes + extrait les sets
   useEffect(() => {
     const fetchAllCards = async () => {
       setLoading(true);
@@ -155,23 +145,18 @@ const Cards = () => {
           console.log(`Récupéré ${allCardsData.length} cartes depuis l'API de fallback`);
         }
         
-        // Si nous avons des cartes
         if (allCardsData.length > 0) {
-          // Inspecter la structure des cartes pour le débogage
+          // Vérifier structure carte pour débogage
           logCardInfo(allCardsData);
-          
-          // Mémoriser toutes les cartes
+          // Mémo all cartes
           setAllCards(allCardsData);
-          
           // Extraire et mémoriser tous les sets disponibles
           const extractedSets = extractAllSets(allCardsData);
           console.log(`${extractedSets.length} sets trouvés:`, extractedSets);
           setAvailableSets(extractedSets);
-          
-          // Calculer le nombre total de pages
+          // Calculer nombre pages
           setTotalPages(Math.ceil(allCardsData.length / cardsPerPage));
-          
-          // Afficher la première page de cartes
+          // Affiche first page
           const firstPageCards = allCardsData.slice(0, cardsPerPage);
           setCards(firstPageCards);
           
@@ -193,23 +178,19 @@ const Cards = () => {
   // Filtrer et paginer les cartes lorsque les filtres ou la page changent
   useEffect(() => {
     if (allCards.length === 0) return;
-    
-    // Appliquer les filtres
+
     let filteredCards = [...allCards];
-    
-    // Filtre par nom
+
     if (filters.name && filters.name.trim() !== '') {
       const searchTerm = filters.name.toLowerCase().trim();
       filteredCards = filteredCards.filter(card => 
         card && card.name && card.name.toLowerCase().includes(searchTerm)
       );
     }
-    
-    // Filtre par set
+
     if (filters.set !== 'all') {
       filteredCards = filteredCards.filter(card => {
         if (!card) return false;
-        
         // Vérifier toutes les propriétés possibles qui pourraient contenir l'ID du set
         return (
           (card.set_id && card.set_id === filters.set) ||
@@ -219,24 +200,20 @@ const Cards = () => {
           (card.set_name && card.set_name === filters.set)
         );
       });
-    }
-    
+    }    
     // Filtre par rareté
     if (filters.rarity !== 'all') {
       filteredCards = filteredCards.filter(card => 
         card && card.rarity && card.rarity === filters.rarity
       );
-    }
-    
-    // Calculer le nombre total de pages pour les cartes filtrées
+    }    
+    // Calcule nombre pages avec filtres
     const newTotalPages = Math.ceil(filteredCards.length / cardsPerPage);
     setTotalPages(newTotalPages);
     
-    // S'assurer que la page courante est valide
     if (currentPage > newTotalPages) {
       setCurrentPage(1);
     }
-    
     // Paginer les cartes filtrées
     const startIndex = (currentPage - 1) * cardsPerPage;
     const endIndex = Math.min(startIndex + cardsPerPage, filteredCards.length);
@@ -245,24 +222,20 @@ const Cards = () => {
     setCards(paginatedCards);
     
   }, [filters, currentPage, allCards]);
-
   // Gestion du changement de page
   const handlePageChange = (page) => {
     setCurrentPage(page);
     window.scrollTo(0, 0);
   };
-
   // Gestion du changement de filtres
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters(prev => ({ ...prev, [name]: value }));
   };
-
   // Application des filtres
   const applyFilters = () => {
     setCurrentPage(1); // Retour à la première page
   };
-
   // Rendu de la pagination
   const renderPagination = () => {
     if (totalPages <= 1) return null;
@@ -280,24 +253,17 @@ const Cards = () => {
         
         <div className="page-numbers">
           {(() => {
-            // Calculer quelles pages afficher
             let pagesToShow = [];
-            
             if (totalPages <= 5) {
-              // Moins de 5 pages, afficher toutes les pages
               pagesToShow = Array.from({ length: totalPages }, (_, i) => i + 1);
             } else if (currentPage <= 3) {
-              // Près du début, afficher les 5 premières pages
               pagesToShow = [1, 2, 3, 4, 5];
             } else if (currentPage >= totalPages - 2) {
-              // Près de la fin, afficher les 5 dernières pages
               pagesToShow = [totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
             } else {
-              // Au milieu, afficher 2 pages avant et 2 pages après la page courante
               pagesToShow = [currentPage - 2, currentPage - 1, currentPage, currentPage + 1, currentPage + 2];
             }
-            
-            // Rendu des boutons de page
+
             return pagesToShow.map(page => (
               <button
                 key={page}
@@ -308,8 +274,7 @@ const Cards = () => {
               </button>
             ));
           })()}
-          
-          {/* Afficher les ellipses si nécessaire */}
+        
           {totalPages > 5 && currentPage < totalPages - 2 && (
             <span className="ellipsis">...</span>
           )}

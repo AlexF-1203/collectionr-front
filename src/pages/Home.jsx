@@ -7,12 +7,10 @@ const Home = () => {
   const words = ['Trade', 'Discover', 'Share'];
   const [wordIndex, setWordIndex] = useState(0);
 
-  // État pour les compteurs
   const [collectors, setCollectors] = useState(0);
   const [cardsTraded, setCardsTraded] = useState(0);
   const [collections, setCollections] = useState(0);
 
-  // Effet pour l'animation de typing
   useEffect(() => {
     const interval = setInterval(() => {
       setWordIndex((prevIndex) => (prevIndex + 1) % words.length);
@@ -21,7 +19,6 @@ const Home = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Effet pour les compteurs
   useEffect(() => {
     const animateValue = (setter, end, duration) => {
       const start = 0;
@@ -81,7 +78,6 @@ const Home = () => {
 
   return (
     <div className="home-container">
-      {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-content">
           <h1 className="hero-title">
@@ -117,7 +113,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Features Section */}
       <section className="features-section">
         <h2 className="section-title">Why choose us?</h2>
         <div className="features-grid">
@@ -144,7 +139,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Market Trends Section */}
       <section className="market-trends">
         <h2 className="section-title">Today's Hot Cards</h2>
         <div className="trends-container">
@@ -170,7 +164,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Community Section */}
       <section className="community-section">
         <div className="community-content">
           <h2 className="section-title">Join the community</h2>
@@ -198,7 +191,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Call to Action Section */}
       <section className="cta-section">
         <div className="cta-content">
           <h2>Ready to start your collection?</h2>
