@@ -9,9 +9,9 @@ import Navbar from './components/Navbar';
 import PokemonCollection from './components/PokemonCollection';
 import Cards from './pages/Cards';
 import CardDetail from "./pages/CardDetail"
-import './components/TCGCard'; // Import du Web Component
-import './styles/TCGCard.css';
 import ProfileComponent from './components/ProfileComponent';
+import './components/TCGCard'; 
+import './styles/TCGCard.css';
 import { ACCESS_TOKEN } from './constants';
 
 function Logout() {
@@ -100,7 +100,7 @@ function App() {
           path="/profile"
           element={
             <ProtectedRoute>
-              <ProfileComponent user={user} />
+              <ProfileComponent />
             </ProtectedRoute>
           }
         />

@@ -1,114 +1,181 @@
-import React, { useState, useEffect } from 'react';
-import '../styles/Profile.css';
+import React, { useState, useEffect, useMemo } from 'react';
 import { ACCESS_TOKEN } from '../constants';
+import api from '../api';
+import '../styles/Profile.css';
 
-const ProfileComponent = ({ user }) => {
-  const [activeTab, setActiveTab] = useState('activity');
+const ProfileComponent = () => {
+  const [activeTab, setActiveTab] = useState('favoris');
+  const [user, setUser] = useState(null);
   const [profileData, setProfileData] = useState({
     totalCards: 0,
     cardsBySets: 0,
     favoriteCards: [],
     recentCards: [],
-    collections: {
-      pokemon: [],
-      yugioh: []
-    },
+    sets: [],
     collectionValue: 0,
     collectionProgress: 0
   });
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fonction manquante qui était référencée dans renderFavoritesTab
-  const handleRemoveFavorite = async (cardId) => {
-    if (!user) return;
-    
-    try {
-      const token = localStorage.getItem(ACCESS_TOKEN);
-      const response = await fetch(`/api/user/favorite/${cardId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (response.ok) {
-        // Mettre à jour l'état en retirant la carte des favoris
-        setProfileData(prevData => ({
-          ...prevData,
-          favoriteCards: prevData.favoriteCards.filter(card => card.id !== cardId)
-        }));
-      } else {
-        console.error('Erreur lors de la suppression du favori');
-      }
-    } catch (error) {
-      console.error('Erreur lors de la suppression du favori:', error);
-    }
-  };
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [expandedView, setExpandedView] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedSet, setSelectedSet] = useState(null);
+  const setsPerPage = 4;
 
   useEffect(() => {
-    let isMounted = true; // Pour éviter les mises à jour d'état après démontage
-    const fetchProfileData = async () => {
-      if (!user) return;
+    const fetchUserData = async () => {
+      setLoading(true);
+      setError(null);
       
       try {
-        setIsLoading(true);
-        setError(null);
-        
         const token = localStorage.getItem(ACCESS_TOKEN);
-        // Correction de l'URL: ajout du / au début
-        const response = await fetch('/api/user/profile/data/', {
-          headers: {
-            'Authorization': `Bearer ${token}`
+        if (!token) {
+          setError("Vous devez être connecté pour accéder à cette page");
+          setLoading(false);
+          return;
+        }
+        
+        console.log("Récupération des données utilisateur...");
+        console.log("Token présent:", token ? "Oui" : "Non");
+        console.log("URL de base de l'API:", api.defaults.baseURL);
+        
+        console.log("Envoi de la requête au endpoint /api/user/profile/");
+        const userResponse = await api.get('/api/user/profile/');
+        console.log("Réponse utilisateur reçue:", userResponse.status);
+        
+        if (userResponse.data) {
+          console.log("Données utilisateur récupérées:", userResponse.data);
+          setUser(userResponse.data);
+          
+          console.log("Envoi de la requête au endpoint /api/user/profile/data/");
+          const profileResponse = await api.get('/api/user/profile/data/');
+          console.log("Réponse profil reçue:", profileResponse.status);
+          
+          if (profileResponse.data) {
+            const data = profileResponse.data;
+            console.log("Données profil récupérées:", data);
+            
+            const userSets = data.sets || data.collections?.pokemon || [];
+            console.log("Sets récupérés:", userSets);
+            
+            setProfileData({
+              totalCards: data.totalCards || 0,
+              cardsBySets: data.cardsBySets || 0,
+              favoriteCards: data.favoriteCards?.filter(card => card.tcg === 'pokemon') || [],
+              recentCards: data.recentCards?.filter(card => card.tcg === 'pokemon') || [],
+              sets: userSets,
+              collectionValue: data.collectionValue || 0,
+              collectionProgress: data.collectionProgress || 0
+            });
           }
-        });
-        
-        if (!isMounted) return;
-        
-        if (response.ok) {
-          const data = await response.json();
-          setProfileData(data);
-        } else {
-          // Gestion explicite des erreurs HTTP
-          const errorText = await response.text();
-          console.error(`Erreur HTTP ${response.status}: ${errorText}`);
-          setError(`Erreur lors du chargement (${response.status})`);
         }
+        
+        setLoading(false);
       } catch (error) {
-        if (!isMounted) return;
-        console.error('Erreur lors de la récupération des données du profil:', error);
-        setError('Erreur de connexion');
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
+        console.error("Erreur lors de la récupération des données:", error);
+        
+        if (error.response) {
+          console.log("Statut de l'erreur:", error.response.status);
+          console.log("Données de l'erreur:", error.response.data);
+          
+          if (error.response.status === 401) {
+            console.log("Erreur 401: Token invalide ou expiré");
+            setError("Session expirée. Veuillez vous reconnecter.");
+            setTimeout(() => {
+              window.location.href = '/login';
+            }, 3000);
+          } else {
+            setError(`Erreur: ${error.response.status} - ${error.response.data.error || 'Problème de serveur'}`);
+          }
+        } else if (error.request) {
+          console.log("Requête sans réponse:", error.request);
+          setError("Impossible de contacter le serveur. Vérifiez votre connexion.");
+        } else {
+          console.log("Erreur:", error.message);
+          setError(`Erreur: ${error.message}`);
         }
+        
+        setLoading(false);
       }
     };
+    
+    fetchUserData();
+  }, []);
 
-    // Ajout d'un timeout pour éviter le chargement infini en cas d'erreur silencieuse
-    const timeoutId = setTimeout(() => {
-      if (isLoading && isMounted) {
-        console.warn('Chargement interrompu (timeout)');
-        setIsLoading(false);
-        setError('Le chargement a pris trop de temps');
-      }
-    }, 15000); // 15 secondes de timeout
+  const filteredSets = useMemo(() => {
+    if (selectedSet) {
+      return [selectedSet];
+    }
+    return profileData.sets.filter(set => 
+      set.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [profileData.sets, searchTerm, selectedSet]);
 
-    fetchProfileData();
+  const currentSets = useMemo(() => {
+    if (expandedView) {
+      return filteredSets;
+    }
+    const indexOfLastSet = currentPage * setsPerPage;
+    const indexOfFirstSet = indexOfLastSet - setsPerPage;
+    return filteredSets.slice(indexOfFirstSet, indexOfLastSet);
+  }, [filteredSets, currentPage, expandedView]);
 
-    // Nettoyage
-    return () => {
-      isMounted = false;
-      clearTimeout(timeoutId);
-    };
-  }, [user]);
+  const totalPages = useMemo(() => {
+    return Math.ceil(filteredSets.length / setsPerPage);
+  }, [filteredSets]);
 
-  if (isLoading) {
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setCurrentPage(1);
+    setSearchTerm('');
+    setExpandedView(false);
+    setSelectedSet(null);
+    setIsDropdownOpen(false);
+  };
+
+  const handleRemoveFavorite = (cardId) => {
+    setProfileData(prevData => ({
+      ...prevData,
+      favoriteCards: prevData.favoriteCards.filter(card => card.id !== cardId)
+    }));
+  };
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const toggleExpandedView = () => {
+    setExpandedView(!expandedView);
+  };
+
+  const handleSetSelect = (set) => {
+    setSelectedSet(set);
+    setIsDropdownOpen(false);
+    setSearchTerm('');
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const clearSelection = () => {
+    setSelectedSet(null);
+    setSearchTerm('');
+  };
+
+  if (loading) {
     return (
       <div className="loading-container">
         <div className="loader"></div>
-        <p className="loading-text">Chargement du profil...</p>
+        <p className="loading-text">Chargement de votre profil...</p>
       </div>
     );
   }
@@ -117,19 +184,10 @@ const ProfileComponent = ({ user }) => {
     return (
       <div className="error-container">
         <div className="error-message">
-          {error}
+          <h2>Erreur</h2>
+          <p>{error}</p>
+          <button className="retry-button" onClick={() => window.location.reload()}>Réessayer</button>
         </div>
-        <button 
-          className="retry-button"
-          onClick={() => {
-            setIsLoading(true);
-            setError(null);
-            // Force l'effet à se réexécuter
-            setProfileData(prev => ({...prev}));
-          }}
-        >
-          Réessayer
-        </button>
       </div>
     );
   }
@@ -138,7 +196,9 @@ const ProfileComponent = ({ user }) => {
     return (
       <div className="error-container">
         <div className="error-message">
-          Impossible de charger les données utilisateur
+          <h2>Non connecté</h2>
+          <p>Vous devez être connecté pour accéder à votre profil.</p>
+          <button className="retry-button" onClick={() => window.location.href = '/login'}>Se connecter</button>
         </div>
       </div>
     );
@@ -146,300 +206,262 @@ const ProfileComponent = ({ user }) => {
 
   const renderActivityTab = () => (
     <div className="content-section">
-      <div className="activity-header">
-        <h3>Recent Activity</h3>
-      </div>
-      <div className="recent-cards">
-        {profileData.recentCards && profileData.recentCards.length > 0 ? (
-          profileData.recentCards.map((card, index) => (
-            <div key={`recent-${index}`} className="card-preview">
-              <img src={card.image} alt={card.name} />
-              <div className="card-info">
-                <div className="card-header">
-                  <h4>{card.name}</h4>
-                  <span className={`card-type ${card.tcg}`}>{card.tcg}</span>
-                </div>
-                <p>{card.set}</p>
-                <div className="card-metadata">
-                  <span className="timestamp">
-                    <i className="far fa-clock"></i>
-                    Added {/* Utilisez une librairie comme date-fns pour formater la date */}
-                  </span>
-                  <span className="completion-status">
-                    <i className="fas fa-layer-group"></i>
-                    Set completion: {card.setCompletion}%
-                  </span>
-                  <span className="collection-info">
-                    <i className="fas fa-folder"></i>
-                    Added to {card.collectionName}
-                  </span>
-                </div>
-              </div>
-              <div className="card-actions">
-                {card.isFavorite && <i className="fas fa-heart favorite-icon"></i>}
-                <div className="price-indicator">
-                  <span className="current-price">€{card.currentPrice}</span>
-                  <span className={`price-change ${card.priceChange >= 0 ? 'positive' : 'negative'}`}>
-                    <i className={`fas fa-caret-${card.priceChange >= 0 ? 'up' : 'down'}`}></i>
-                    {Math.abs(card.priceChange)}%
-                  </span>
-                </div>
+      <h3>Activité récente</h3>
+      
+      {profileData.recentCards.length > 0 ? (
+        profileData.recentCards.map(card => (
+          <div className="card-preview" key={card.id}>
+            <img src={card.image} alt={card.name} />
+            <div className="card-info">
+              <div className="card-header">
+                <h4>{card.name}</h4>
+                <span className="card-set">{card.set}</span>
               </div>
             </div>
-          ))
-        ) : (
-          <div className="empty-state">
-            <i className="fas fa-history"></i>
-            <p>No recent activity</p>
+            <div className="card-price-info">
+              <div className="price-value">{card.currentPrice.toFixed(2)} €</div>
+              <div className={`price-change ${card.priceChange >= 0 ? 'positive' : 'negative'}`}>
+                {card.priceChange >= 0 ? "+" : ""}{card.priceChange.toFixed(2)} €
+              </div>
+            </div>
           </div>
-        )}
-      </div>
-      <div className="view-more">
-        <button className="view-more-btn">View More Activity</button>
-      </div>
+        ))
+      ) : (
+        <div className="empty-state">
+          <i>📋</i>
+          <p>Aucune activité récente</p>
+        </div>
+      )}
     </div>
   );
 
   const renderCollectionsTab = () => (
     <div className="content-section">
+      <h3>Sets Pokémon</h3>
+      
+      <div className="search-and-pagination">
+        <div className="dropdown-container">
+          <button 
+            className="dropdown-button" 
+            onClick={toggleDropdown}
+          >
+            {selectedSet ? selectedSet.title : 'Sélectionner un set'} {isDropdownOpen ? '▲' : '▼'}
+          </button>
+          
+          {isDropdownOpen && (
+            <div className="dropdown-menu">
+              <div className="dropdown-search">
+                <input
+                  type="text"
+                  placeholder="Filtrer les sets..."
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+              <div className="dropdown-items">
+                {profileData.sets
+                  .filter(set => set.title.toLowerCase().includes(searchTerm.toLowerCase()))
+                  .map((set, index) => (
+                    <div 
+                      key={set.id || index} 
+                      className="dropdown-item"
+                      onClick={() => handleSetSelect(set)}
+                    >
+                      {set.title}
+                    </div>
+                  ))
+                }
+              </div>
+              {selectedSet && (
+                <div className="dropdown-footer">
+                  <button 
+                    className="clear-selection" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      clearSelection();
+                    }}
+                  >
+                    Effacer la sélection
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+        
+        <div className="view-toggle">
+          <button 
+            className="toggle-button" 
+            onClick={toggleExpandedView}
+            disabled={selectedSet !== null}
+          >
+            {expandedView ? 'Afficher moins' : 'Afficher tout'}
+          </button>
+        </div>
+      </div>
+      
       <div className="collections-grid">
-        {/* Section Pokemon */}
-        <div className="tcg-section">
-          <h3>
-            <i className="fas fa-gamepad"></i>
-            Pokemon Collections
-          </h3>
-          <div className="set-cards">
-            {profileData.collections && profileData.collections.pokemon && profileData.collections.pokemon.length > 0 ? (
-              profileData.collections.pokemon.map((collection, index) => (
-                <div key={`pokemon-${index}`} className="set-card">
-                  <div className="set-image">
-                    <img src={collection.imageUrl} alt={collection.title} />
-                  </div>
-                  <div className="set-info">
-                    <h4>{collection.title}</h4>
-                    <p>{collection.ownedCards}/{collection.totalCards} cards collected</p>
-                    <div className="set-stats">
-                      <div className="progress-bar">
-                        <div 
-                          className="progress" 
-                          style={{ width: `${collection.progress}%` }}
-                        ></div>
-                      </div>
-                      <span className="percentage">{collection.progress}%</span>
-                    </div>
-                    <p className="release-date">Released: {collection.releaseDate}</p>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="empty-state">
-                <i className="fas fa-box-open"></i>
-                <p>No Pokemon collections yet</p>
+        {currentSets && currentSets.length > 0 ? (
+          currentSets.map((set, index) => (
+            <div className="card-preview" key={set.id || index}>
+              <div className="set-image-container">
+                <img 
+                  src={set.imageUrl || set.image_url} 
+                  alt={set.title} 
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = `https://via.placeholder.com/150x130?text=${set.title}`;
+                  }}
+                />
               </div>
-            )}
-          </div>
-        </div>
-
-        {/* Section Yu-Gi-Oh */}
-        <div className="tcg-section">
-          <h3>
-            <i className="fas fa-dragon"></i>
-            Yu-Gi-Oh Collections
-          </h3>
-          <div className="set-cards">
-            {profileData.collections && profileData.collections.yugioh && profileData.collections.yugioh.length > 0 ? (
-              profileData.collections.yugioh.map((collection, index) => (
-                <div key={`yugioh-${index}`} className="set-card">
-                  <div className="set-image">
-                    <img src={collection.imageUrl} alt={collection.title} />
-                  </div>
-                  <div className="set-info">
-                    <h4>{collection.title}</h4>
-                    <p>{collection.ownedCards}/{collection.totalCards} cards collected</p>
-                    <div className="set-stats">
-                      <div className="progress-bar">
-                        <div 
-                          className="progress" 
-                          style={{ width: `${collection.progress}%` }}
-                        ></div>
-                      </div>
-                      <span className="percentage">{collection.progress}%</span>
-                    </div>
-                    <p className="release-date">Released: {collection.releaseDate}</p>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="empty-state">
-                <i className="fas fa-box-open"></i>
-                <p>No Yu-Gi-Oh collections yet</p>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderFavoritesTab = () => (
-    <div className="content-section">
-      <div className="activity-header">
-        <h3>Favorite Cards</h3>
-        <div className="activity-filters">
-          <span className="active">All</span>
-          <span>Pokemon</span>
-          <span>Yu-Gi-Oh</span>
-        </div>
-      </div>
-      <div className="recent-cards">
-        {profileData.favoriteCards && profileData.favoriteCards.length > 0 ? (
-          profileData.favoriteCards.map((card, index) => (
-            <div key={`favorite-${index}`} className="card-preview">
-              <img src={card.image} alt={card.name} />
               <div className="card-info">
                 <div className="card-header">
-                  <h4>{card.name}</h4>
-                  <span className={`card-type ${card.tcg}`}>{card.tcg}</span>
+                  <h4>{set.title}</h4>
+                  <span className="card-set">{set.releaseDate}</span>
                 </div>
-                <p>{card.set}</p>
-                <div className="card-metadata">
-                  <span className="timestamp">
-                    <i className="far fa-clock"></i>
-                    Added to favorites {/* date formatting */}
-                  </span>
-                  <span className="completion-status">
-                    <i className="fas fa-layer-group"></i>
-                    Set completion: {card.setCompletion}%
-                  </span>
-                  <span className="collection-info">
-                    <i className="fas fa-folder"></i>
-                    Found in {card.collectionName}
-                  </span>
-                </div>
-              </div>
-              <div className="card-actions">
-                <button className="remove-btn" onClick={() => handleRemoveFavorite(card.id)}>
-                  <i className="fas fa-times"></i>
-                </button>
-                <div className="price-indicator">
-                  <span className="current-price">€{card.currentPrice}</span>
-                  <span className={`price-change ${card.priceChange >= 0 ? 'positive' : 'negative'}`}>
-                    <i className={`fas fa-caret-${card.priceChange >= 0 ? 'up' : 'down'}`}></i>
-                    {Math.abs(card.priceChange)}%
-                  </span>
+                <div className="card-collection">
+                  {set.ownedCards !== undefined && set.totalCards !== undefined ? 
+                    `${set.ownedCards}/${set.totalCards} cartes • ${set.progress}% complet` :
+                    set.total_cards !== undefined ? 
+                      `0/${set.total_cards} cartes • 0% complet` :
+                      'Collection en cours'
+                  }
                 </div>
               </div>
             </div>
           ))
         ) : (
           <div className="empty-state">
-            <i className="fas fa-heart"></i>
-            <p>No favorite cards yet</p>
+            <i>🃏</i>
+            <p>Aucun set Pokémon</p>
           </div>
         )}
       </div>
+      
+      {!expandedView && !selectedSet && filteredSets.length > setsPerPage && (
+        <div className="pagination">
+          <button 
+            className="pagination-button"
+            disabled={currentPage === 1}
+            onClick={() => handlePageChange(currentPage - 1)}
+          >
+            &laquo; Précédent
+          </button>
+          
+          <div className="page-info">
+            Page {currentPage} sur {totalPages}
+          </div>
+          
+          <button 
+            className="pagination-button"
+            disabled={currentPage === totalPages}
+            onClick={() => handlePageChange(currentPage + 1)}
+          >
+            Suivant &raquo;
+          </button>
+        </div>
+      )}
     </div>
   );
 
-  const renderOffersTab = () => (
+  const renderFavoritesTab = () => (
     <div className="content-section">
-      <div className="activity-header">
-        <h3>My offers</h3>
-      </div>
-      <div className="activity-grid">
-        {/* Implementation placeholder */}
+      <h3>Cartes favorites</h3>
+      
+      {profileData.favoriteCards.length > 0 ? (
+        profileData.favoriteCards.map(card => (
+          <div className="card-preview" key={card.id}>
+            <button 
+              className="remove-btn" 
+              onClick={() => handleRemoveFavorite(card.id)}
+            >
+              ×
+            </button>
+            <img src={card.image} alt={card.name} />
+            <div className="card-info">
+              <div className="card-header">
+                <h4>{card.name}</h4>
+                <span className="card-set">{card.set}</span>
+              </div>
+            </div>
+            <div className="card-price-info">
+              <div className="price-value">{card.currentPrice.toFixed(2)} €</div>
+              <div className={`price-change ${card.priceChange >= 0 ? 'positive' : 'negative'}`}>
+                {card.priceChange >= 0 ? "+" : ""}{card.priceChange.toFixed(2)} €
+              </div>
+            </div>
+          </div>
+        ))
+      ) : (
         <div className="empty-state">
-          <i className="fas fa-handshake"></i>
-          <p>No active offers</p>
+          <i>❤️</i>
+          <p>Aucune carte favorite</p>
         </div>
-      </div>
+      )}
     </div>
   );
 
   return (
     <div className="profile-container">
       <div className="profile-sidebar">
+        <div className="user-avatar">
+          {user.profilePicture ? (
+            <img src={user.profilePicture} alt={user.username} />
+          ) : (
+            <div className="avatar-placeholder">
+              {user.username ? user.username.charAt(0).toUpperCase() : 'A'}
+            </div>
+          )}
+        </div>
+        
         <div className="user-info">
-          <div className="user-avatar">
-            <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`} alt="avatar" />
-          </div>
-          <h2>{user.firstName} {user.lastName}</h2>
-          <p className="user-handle">@{user.email.split('@')[0]}</p>
-          <div className="user-stats">
-            <div className="stat">
-              <span className="stat-value">{profileData.totalCards}</span>
-              <span className="stat-label">Cards</span>
-            </div>
-            <div className="stat">
-              <span className="stat-value">{profileData.cardsBySets}</span>
-              <span className="stat-label">Sets</span>
-            </div>
-            <div className="stat">
-              <span className="stat-value">{profileData.favoriteCards ? profileData.favoriteCards.length : 0}</span>
-              <span className="stat-label">Favorites</span>
-            </div>
-          </div>
+          <div className="user-handle">@{user.username}</div>
+          <div className="user-email">{user.email}</div>
         </div>
-        <div className="stat">
-          <div className="quick-stats">
-            <div className="completion-rate">
-              <div className="completion-header">
-                <span className="stat-label">Collection Value</span>
-                <span className="stat-value">€{profileData.collectionValue ? profileData.collectionValue.toFixed(2) : '0.00'}</span>
-              </div>
-            </div>
+        
+        <div className="user-stats">
+          <div className="stat">
+            <div className="stat-value">{profileData.totalCards}</div>
+            <div className="stat-label">Cartes</div>
           </div>
-        </div>
-        <div className="quick-stats">
-          <div className="completion-rate">
-            <div className="completion-header">
-              <h3>Collection Progress</h3>
-              <span className="percentage">{profileData.collectionProgress || 0}%</span>
-            </div>
-            <div className="progress-bar">
-              <div 
-                className="progress" 
-                style={{ width: `${profileData.collectionProgress || 0}%` }}
-              ></div>
-            </div>
+          <div className="stat">
+            <div className="stat-value">{profileData.cardsBySets}</div>
+            <div className="stat-label">Sets</div>
+          </div>
+          <div className="stat">
+            <div className="stat-value">{profileData.collectionValue.toFixed(2)} €</div>
+            <div className="stat-label">Valeur</div>
           </div>
         </div>
       </div>
-
+      
       <div className="profile-main">
         <div className="content-tabs">
-          <button
-            className={`tab ${activeTab === 'activity' ? 'active' : ''}`}
-            onClick={() => setActiveTab('activity')}
+          <button 
+            className={`tab ${activeTab === 'activity' ? 'active' : ''}`} 
+            onClick={() => handleTabChange('activity')}
           >
-            Recent Activity
+            Activité
           </button>
-          <button
-            className={`tab ${activeTab === 'collections' ? 'active' : ''}`}
-            onClick={() => setActiveTab('collections')}
+          <button 
+            className={`tab ${activeTab === 'collections' ? 'active' : ''}`} 
+            onClick={() => handleTabChange('collections')}
           >
-            Collections
+            Sets
           </button>
-          <button
-            className={`tab ${activeTab === 'favorites' ? 'active' : ''}`}
-            onClick={() => setActiveTab('favorites')}
+          <button 
+            className={`tab ${activeTab === 'favoris' ? 'active' : ''}`} 
+            onClick={() => handleTabChange('favoris')}
           >
-            Favorites
-          </button>
-          <button
-            className={`tab ${activeTab === 'offers' ? 'active' : ''}`}
-            onClick={() => setActiveTab('offers')}
-          >
-            Offers
+            Favoris
           </button>
         </div>
 
         <div className="tab-content">
           {activeTab === 'activity' && renderActivityTab()}
           {activeTab === 'collections' && renderCollectionsTab()}
-          {activeTab === 'favorites' && renderFavoritesTab()}
-          {activeTab === 'offers' && renderOffersTab()}
+          {activeTab === 'favoris' && renderFavoritesTab()}
         </div>
       </div>
     </div>
