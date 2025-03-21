@@ -1,8 +1,7 @@
 import { useState } from "react";
-import api from "../api";
+import axios from "axios"; // Utiliser axios directement
 import PropTypes from 'prop-types';
 import { useNavigate } from "react-router-dom";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import { Link } from 'react-router-dom';
 import LoadingIndicator from "../components/LoadingIndicator";
 import '../styles/Sign.css';
@@ -12,20 +11,31 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  
+  // URL de base pour l'API
+  const baseURL = import.meta.env.VITE_API_URL || "http://localhost:8000/";
 
-  // Gestion soumission formulaire de connexion
   const handleSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
+    console.log("Tentative de connexion pour:", username);
 
-    // Essaie de se connecter
     try {
-      const res = await api.post('api/token/', { username, password });
-      localStorage.setItem(ACCESS_TOKEN, res.data.access);
-      localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-      window.dispatchEvent(new Event('storage'));
-      navigate("/");
+      console.log("Envoi de la requête de connexion...");
+      // Utiliser axios directement pour éviter les intercepteurs qui peuvent causer des boucles
+      await axios.post(
+        `${baseURL}/api/token/`, 
+        { username, password },
+        { withCredentials: true }
+      );
+      
+      console.log("Connexion réussie, redirection...");
+      // Délai court pour permettre au navigateur de traiter les cookies
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 100);
     } catch (error) {
+      console.error("Erreur de connexion:", error);
       alert(error.response?.data?.detail || "Erreur de connexion");
     } finally {
       setLoading(false);
