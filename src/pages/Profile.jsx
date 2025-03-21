@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { ACCESS_TOKEN } from '../constants';
 import api from '../api';
 import '../styles/Profile.css';
 
@@ -31,15 +30,7 @@ const ProfileComponent = () => {
       setError(null);
       
       try {
-        const token = localStorage.getItem(ACCESS_TOKEN);
-        if (!token) {
-          setError("Vous devez être connecté pour accéder à cette page");
-          setLoading(false);
-          return;
-        }
-        
         console.log("Récupération des données utilisateur...");
-        console.log("Token présent:", token ? "Oui" : "Non");
         console.log("URL de base de l'API:", api.defaults.baseURL);
         
         console.log("Envoi de la requête au endpoint /api/user/profile/");
@@ -82,7 +73,7 @@ const ProfileComponent = () => {
           console.log("Données de l'erreur:", error.response.data);
           
           if (error.response.status === 401) {
-            console.log("Erreur 401: Token invalide ou expiré");
+            console.log("Erreur 401: Non autorisé");
             setError("Session expirée. Veuillez vous reconnecter.");
             setTimeout(() => {
               window.location.href = '/login';
@@ -136,11 +127,32 @@ const ProfileComponent = () => {
     setIsDropdownOpen(false);
   };
 
-  const handleRemoveFavorite = (cardId) => {
-    setProfileData(prevData => ({
-      ...prevData,
-      favoriteCards: prevData.favoriteCards.filter(card => card.id !== cardId)
-    }));
+  const handleRemoveFavorite = async (cardId) => {
+    console.log(`SUPPRIMER CARTE: ${cardId}`);
+    try {
+      const favoritesResponse = await api.get('/api/favorites/');
+      console.log("Tous les favoris:", favoritesResponse.data);
+
+      const favoriToDelete = favoritesResponse.data.find(fav => fav.card.id === cardId);
+      
+      if (!favoriToDelete) {
+        console.error(`Aucun favori trouvé pour la carte ${cardId}`);
+        alert("Impossible de supprimer ce favori");
+        return;
+      }
+      console.log(`Suppression du favori ID=${favoriToDelete.id}`);
+      await api.delete(`/api/favorites/${favoriToDelete.id}/`);
+
+      setProfileData(prevData => ({
+        ...prevData,
+        favoriteCards: prevData.favoriteCards.filter(card => card.id !== cardId)
+      }));
+      
+      console.log("Suppression réussie");
+    } catch (error) {
+      console.error("Erreur lors de la suppression:", error);
+      alert(`Erreur lors de la suppression: ${error.message}`);
+    }
   };
 
   const handlePageChange = (pageNumber) => {

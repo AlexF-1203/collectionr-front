@@ -1,74 +1,66 @@
-// Vérifiez votre fichier api.js
-// L'intercepteur doit ajouter correctement le token d'authentification
-
 import axios from "axios"
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "./constants"
+
+console.log("Initialisation de l'API avec authentification par cookies...");
+
+// Indicateur pour éviter les boucles infinies
+let isRefreshing = false;
+let isRedirecting = false;
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000/",
+  withCredentials: true, // Important pour envoyer/recevoir les cookies
 });
 
-// Cet intercepteur est crucial pour résoudre les problèmes d'authentification
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem(ACCESS_TOKEN);
-    if (token) {
-      // S'assurer que les en-têtes existent
-      config.headers = config.headers || {};
-      config.headers.Authorization = `Bearer ${token}`;
-      
-      // Ajouter des logs pour le débogage
-      console.log("Token d'authentification ajouté à la requête:", token.substring(0, 10) + "...");
-    } else {
-      console.warn("Aucun token d'authentification trouvé dans localStorage");
-    }
-    return config;
-  },
-  (error) => {
-    console.error("Erreur dans l'intercepteur de requête:", error);
-    return Promise.reject(error);
-  }
-);
+// Plus besoin des intercepteurs pour gérer les tokens dans localStorage
+// Nous gardons l'intercepteur de réponse pour les erreurs 401
 
-// Optionnel: Ajouter un intercepteur de réponse pour gérer les erreurs 401
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log("Réponse reçue pour:", response.config.url);
+    return response;
+  },
   async (error) => {
+    console.log("Erreur de réponse pour:", error.config?.url);
     const originalRequest = error.config;
     
     // Si l'erreur est 401 (non autorisé) et que nous n'avons pas déjà essayé de rafraîchir le token
-    if (error.response && error.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      
-      try {
-        // Essayer de rafraîchir le token
-        const refreshToken = localStorage.getItem(REFRESH_TOKEN);
-        if (refreshToken) {
-          const response = await axios.post(
-            `${api.defaults.baseURL}/api/token/refresh/`,
-            { refresh: refreshToken }
-          );
-          
-          if (response.status === 200) {
-            // Mettre à jour le token d'accès
-            localStorage.setItem(ACCESS_TOKEN, response.data.access);
-            
-            // Mettre à jour l'en-tête d'autorisation
-            originalRequest.headers.Authorization = `Bearer ${response.data.access}`;
-            
-            // Réessayer la requête d'origine
-            return api(originalRequest);
-          }
-        }
-      } catch (refreshError) {
-        console.error("Erreur lors du rafraîchissement du token:", refreshError);
+    if (error.response && error.response.status === 401 && !originalRequest._retry && !isRefreshing) {
+      // Vérifier si nous sommes déjà sur la page de login
+      if (window.location.pathname === "/login") {
+        console.log("Déjà sur la page de login, pas de redirection");
+        return Promise.reject(error);
       }
       
-      // Si nous n'avons pas pu rafraîchir le token ou s'il n'y a pas de token de rafraîchissement
-      console.warn("Session expirée, redirection vers la page de connexion");
-      localStorage.removeItem(ACCESS_TOKEN);
-      localStorage.removeItem(REFRESH_TOKEN);
-      window.location.href = "/login";
+      originalRequest._retry = true;
+      isRefreshing = true;
+      
+      try {
+        console.log("Tentative de rafraîchissement du token");
+        // Le token de rafraîchissement est envoyé automatiquement via cookie
+        await axios.post(
+          `${api.defaults.baseURL}/api/token/refresh/`,
+          {}, 
+          { withCredentials: true }
+        );
+        
+        isRefreshing = false;
+        // Réessayer la requête d'origine
+        return api(originalRequest);
+      } catch (refreshError) {
+        console.error("Echec du rafraîchissement:", refreshError);
+        isRefreshing = false;
+        
+        // Redirection vers la page de connexion, mais une seule fois
+        if (!isRedirecting && window.location.pathname !== "/login") {
+          console.warn("Redirection vers la page de login");
+          isRedirecting = true;
+          window.location.href = "/login";
+          // Réinitialiser après la redirection
+          setTimeout(() => {
+            isRedirecting = false;
+          }, 1000);
+        }
+      }
     }
     
     return Promise.reject(error);
