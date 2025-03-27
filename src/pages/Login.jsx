@@ -1,6 +1,5 @@
 import { useState } from "react";
-import axios from "axios"; // Utiliser axios directement
-import PropTypes from 'prop-types';
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
 import LoadingIndicator from "../components/LoadingIndicator";
@@ -12,28 +11,28 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   
-  // URL de base pour l'API
   const baseURL = import.meta.env.VITE_API_URL || "http://localhost:8000/";
 
   const handleSubmit = async (e) => {
-    setLoading(true);
     e.preventDefault();
+    setLoading(true);
     console.log("Tentative de connexion pour:", username);
 
     try {
       console.log("Envoi de la requête de connexion...");
-      // Utiliser axios directement pour éviter les intercepteurs qui peuvent causer des boucles
-      await axios.post(
+      const response = await axios.post(
         `${baseURL}/api/token/`, 
         { username, password },
         { withCredentials: true }
       );
       
-      console.log("Connexion réussie, redirection...");
-      // Délai court pour permettre au navigateur de traiter les cookies
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 100);
+      if (response.status === 200) {
+        console.log("Connexion réussie, redirection...");
+        // Attendre un court instant pour que les cookies soient traités
+        setTimeout(() => {
+          navigate("/");
+        }, 500);
+      }
     } catch (error) {
       console.error("Erreur de connexion:", error);
       alert(error.response?.data?.detail || "Erreur de connexion");
@@ -53,17 +52,21 @@ const Login = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Username"
+              required
             />
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
+              required
             />
           </div>
           {loading && <LoadingIndicator />}
           <div className="form-actions">
-            <button type="submit" className="button-shine">Login</button>
+            <button type="submit" className="button-shine" disabled={loading}>
+              {loading ? "Connexion..." : "Login"}
+            </button>
           </div>
         </form>
         <div className="form-links">
@@ -72,11 +75,6 @@ const Login = () => {
       </div>
     </div>
   );
-};
-
-Login.propTypes = {
-  route: PropTypes.string.isRequired,
-  method: PropTypes.oneOf(['login']).isRequired
 };
 
 export default Login;
