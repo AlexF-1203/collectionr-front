@@ -84,12 +84,12 @@ const Home = () => {
             <span className="gradient-text">Collect</span>
             <span className="typing-text">{words[wordIndex]}</span>
           </h1>
-          <p className="hero-subtitle">Your next-generation Pokémon card collection platform</p>
+          <p className="hero-subtitle"><span className="mot-appuyer">Maximisez</span> la valeur de votre collection pour suivre et échanger vos cartes en toute simplicité avec <span className="mot-appuyer">CollectionR</span></p>
           <div className="cta-buttons">
             <Link to="/signup" className="primary-btn">Start the adventure</Link>
             <Link to="/cards" className="secondary-btn">Discover cards</Link>
           </div>
-          <div className="hero-stats">
+          {/* <div className="hero-stats">
             <div className="stat-item">
               <span className="stat-number">{collectors}</span>
               <span className="stat-label">Collectors</span>
@@ -102,13 +102,14 @@ const Home = () => {
               <span className="stat-number">{collections}</span>
               <span className="stat-label">Collections</span>
             </div>
-          </div>
+          </div> */}
         </div>
         <div className="hero-image">
           <div className="floating-cards">
-            <img src="https://images.pokemontcg.io/base1/58.png" alt="Pokemon Card" className="card-1" />
-            <img src="https://images.pokemontcg.io/neo1/17.png" alt="Pokemon Card" className="card-2" />
-            <img src="https://images.pokemontcg.io/base1/58.png" alt="Pokemon Card" className="card-3" />
+            <img src="https://images.pokemontcg.io/sv8pt5/161_hires.png" alt="Charizard VMAX" className="card-1 animated-card" />
+            <img src="https://images.pokemontcg.io/swsh45sv/SV122_hires.png" alt="Blastoise EX Full Art" className="card-2 animated-card" />
+            <img src="https://images.pokemontcg.io/swsh12pt5/160_hires.png" alt="Charizard Base Set" className="card-3 animated-card" />
+            <img src="https://images.pokemontcg.io/swsh45sv/SV107_hires.png" alt="Pikachu VMAX Rainbow Rare" className="card-4 animated-card" />
           </div>
         </div>
       </section>
@@ -139,7 +140,7 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="market-trends">
+      {/* <section className="market-trends">
         <h2 className="section-title">Today's Hot Cards</h2>
         <div className="trends-container">
           {trendingCards.map((card, index) => (
@@ -162,7 +163,7 @@ const Home = () => {
             </div>
           ))}
         </div>
-      </section>
+      </section> */}
 
       <section className="community-section">
         <div className="community-content">

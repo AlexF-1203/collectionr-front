@@ -5,22 +5,23 @@
 }
 
 .navbar {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   height: 65px;
   padding: 0 5%;
   background-color: rgba(34, 34, 34, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(100px);
   position: fixed;
   width: 100%;
   top: 0;
   z-index: 1000;
+  gap: 2rem;
 }
 
 .logo {
-  justify-self: start;
+  display: flex;
+  align-items: center;
   transition: all 0.3s ease;
 }
 
@@ -34,18 +35,22 @@
 }
 
 .logo-collectionr {
-  height: 60px;
+  height: 50px;
   width: auto;
+}
+
+.nav-content {
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+  flex: 1;
 }
 
 .nav-links {
   display: flex;
-  justify-content: center;
+  gap: 3rem;
+  flex: 1;
   align-items: center;
-  gap: 4rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
 }
 
 .nav-item {
@@ -75,9 +80,45 @@
   opacity: 1;
 }
 
-.user-profile {
-  justify-self: end;
+.search-form {
+  display: flex;
+  align-items: center;
   position: relative;
+  max-width: 500px;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 40px 10px 15px;
+  border: none;
+  border-radius: 25px;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: #ccc;
+}
+
+.search-button {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.user-profile {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex: 1;
 }
 
 .nav-buttons {
@@ -122,7 +163,7 @@
 
 .user-icon {
   font-size: 24px;
-  color: #333;
+  color: #dadada;
   transition: color 0.3s ease;
 }
 
@@ -130,6 +171,7 @@
   color: var(--primary-color);
 }
 
+/* Dropdown */
 .profile-dropdown {
   position: absolute;
   right: 0;
@@ -177,7 +219,6 @@
   text-decoration: none;
   color: #333;
   transition: all 0.2s ease;
-  position: relative;
   font-weight: 500;
   width: 100%;
   text-align: left;
@@ -227,31 +268,11 @@
 }
 
 @media (max-width: 768px) {
-  .navbar {
-    grid-template-columns: auto auto;
-    padding: 0 20px;
-  }
-
   .nav-links {
     display: none;
   }
 
   .logo-collectionr {
     height: 50px;
-  }
-}
-
-@media (max-width: 480px) {
-  .navbar {
-    height: 70px;
-  }
-
-  .logo-collectionr {
-    height: 40px;
-  }
-
-  .login-btn {
-    padding: 0.5rem 1rem;
-    font-size: 14px;
   }
 }
