@@ -24,7 +24,7 @@ const PokemonCollection = () => {
           'Content-Type': 'application/json',
         },
       });
-      
+
       if (response.status === 401) {
         throw new Error('Session expirée, veuillez vous reconnecter');
       }
@@ -33,7 +33,7 @@ const PokemonCollection = () => {
         const errorData = await response.json();
         throw new Error(errorData.detail || 'Erreur serveur');
       }
-      
+
       const data = await response.json();
       setCards(data.results);
       setTotalPages(Math.ceil(data.count / 5)); // 5 est le nombre d'éléments par page
@@ -92,4 +92,4 @@ const PokemonCollection = () => {
   );
 };
 
-export default PokemonCollection; 
+export default PokemonCollection;

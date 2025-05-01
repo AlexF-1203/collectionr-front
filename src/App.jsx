@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
@@ -10,7 +10,8 @@ import PokemonCollection from './components/PokemonCollection';
 import Cards from './pages/Cards';
 import CardDetail from "./pages/CardDetail"
 import Profile from './pages/Profile';
-import './components/TCGCard'; 
+import AuthCallback from './components/AuthCallback';
+import './components/TCGCard';
 import './styles/TCGCard.css';
 import { ACCESS_TOKEN } from './constants';
 
@@ -23,7 +24,6 @@ function App() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Récupérer les informations de l'utilisateur au chargement
     const fetchUserData = async () => {
       const token = localStorage.getItem(ACCESS_TOKEN);
       if (token) {
@@ -34,6 +34,7 @@ function App() {
               'Content-Type': 'application/json'
             }
           });
+          console.log("URL complète:", window.location.href);
           if (response.ok) {
             const userData = await response.json();
             setUser(userData);
@@ -71,6 +72,10 @@ function App() {
         <Route
           path="/register"
           element={<Register route="api/user/register/" method="register" />}
+        />
+        <Route
+           path="/auth-callback"
+           element={<AuthCallback />}
         />
         <Route
           path="/collection"
