@@ -1,19 +1,19 @@
 :root {
   --primary-color: #FF8F3F;
   --secondary-color: #F8B622;
-  --text-color: #fff;
-  --background-color: hsl(0, 0%, 0%);
-  --card-bg: rgba(30, 30, 40, 0.7);
-  --card-hover: rgba(40, 40, 50, 0.8);
-  --card-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
-  --card-shadow-hover: 0 15px 30px rgba(0, 0, 0, 0.4);
-  --glow-color: rgba(255, 143, 63, 0.6);
-  --rare-glow: rgba(116, 0, 255, 0.5);
-  --ultra-rare-glow: rgba(0, 195, 255, 0.5);
-  --legendary-glow: rgba(255, 215, 0, 0.5);
-  --section-bg-dark: hsl(0, 0%, 10%);
-  --section-bg-light: hsl(0, 0%, 15%);
-  --card-border: rgba(255, 255, 255, 0.05);
+  --text-color: #222;
+  --background-color: hsl(0, 0%, 98%);
+  --card-bg: rgba(255, 255, 255, 0.8);
+  --card-hover: rgba(255, 255, 255, 1);
+  --card-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  --card-shadow-hover: 0 15px 30px rgba(0, 0, 0, 0.15);
+  --glow-color: rgba(255, 143, 63, 0.3);
+  --rare-glow: rgba(116, 0, 255, 0.2);
+  --ultra-rare-glow: rgba(0, 195, 255, 0.2);
+  --legendary-glow: rgba(255, 215, 0, 0.2);
+  --section-bg-dark: hsl(0, 0%, 94%);
+  --section-bg-light: hsl(0, 0%, 98%);
+  --card-border: rgba(0, 0, 0, 0.05);
   --card-border-hover: rgba(255, 143, 63, 0.3);
 }
 
@@ -25,14 +25,14 @@
 
 body {
   background-color: var(--background-color);
-  margin-top: 70px;
+  margin-top: 0px;
   font-family: "Montserrat", sans-serif;
   color: var(--text-color);
 }
 
 
 .hero-section {
-  min-height: 90vh;
+  min-height: 110vh;
   display: flex;
   align-items: center;
   padding: 4rem 0;
@@ -94,6 +94,7 @@ body {
 }
 
 .hero-title {
+  padding-top: 3rem;
   font-size: 4rem;
   font-weight: 800;
   margin-bottom: 1.5rem;
@@ -137,7 +138,7 @@ body {
   font-size: 1.5rem;
   color: rgba(255, 255, 255, 0.7);
   margin-bottom: 2rem;
-  max-width: 450px;
+  max-width: 600px;
 }
 
 .mot-appuyer {
@@ -231,7 +232,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 450px;
+  width: 375px;
   height: 450px;
   margin-right: 15%;
   overflow: visible;
@@ -249,7 +250,7 @@ body {
 
 .floating-cards img {
   position: absolute;
-  width: 350px;
+  width: 300px;
   height: auto;
   border-radius: 12px;
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
@@ -768,6 +769,47 @@ body {
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
   background: white;
 }
+
+@media (min-width: 1800px) {
+ .hero-title {
+    font-size: 4.5rem;
+  }
+
+  .typing-text {
+    font-size: 3.5rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.5rem;
+    max-width: 600px;
+  }
+
+  .cta-buttons {
+    gap: 2rem;
+  }
+
+  .hero-stats {
+    gap: 5rem;
+  }
+
+  .floating-cards img {
+    width: 400px;
+  }
+
+  .hero-image {
+    width: 500px;
+    height: 650px;
+  }
+
+  .stat-number {
+    font-size: 3rem;
+  }
+
+  .stat-label {
+    font-size: 1.1rem;
+  }
+}
+
 
 @media (max-width: 1024px) {
   .hero-section {

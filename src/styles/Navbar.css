@@ -8,9 +8,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 65px;
+  height: 70px;
   padding: 0 5%;
-  background-color: rgba(34, 34, 34, 0.8);
   backdrop-filter: blur(100px);
   position: fixed;
   width: 100%;
@@ -92,16 +91,15 @@
 .search-input {
   width: 100%;
   padding: 10px 40px 10px 15px;
-  border: none;
   border-radius: 25px;
   font-size: 14px;
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
+  background: rgb(250, 250, 250) !important;
+  color: rgb(32, 32, 32) !important;
   outline: none;
 }
 
 .search-input::placeholder {
-  color: #ccc;
+  color: #333333 !important;
 }
 
 .search-button {
@@ -109,7 +107,7 @@
   right: 10px;
   background: none;
   border: none;
-  color: white;
+  color: rgb(36, 36, 36);
   font-size: 16px;
   cursor: pointer;
 }
@@ -176,7 +174,7 @@
   position: absolute;
   right: 0;
   top: calc(100% + 15px);
-  background: white;
+  background: rgb(15, 15, 15);
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
   min-width: 250px;
@@ -205,10 +203,10 @@
   right: 20px;
   width: 16px;
   height: 16px;
-  background: white;
+  background: rgb(15, 15, 15);
   transform: rotate(45deg);
-  border-left: 1px solid rgba(255, 255, 255, 0.18);
-  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  /* border-left: 1px solid rgba(255, 255, 255, 0.18);
+  border-top: 1px solid rgba(255, 255, 255, 0.18); */
 }
 
 .profile-dropdown a,
@@ -217,7 +215,7 @@
   align-items: center;
   padding: 15px 20px;
   text-decoration: none;
-  color: #333;
+  color: #e2e2e2;
   transition: all 0.2s ease;
   font-weight: 500;
   width: 100%;
@@ -225,6 +223,14 @@
   border: none;
   background: none;
   cursor: pointer;
+}
+
+.profile-dropdown::before {
+  appearance: none;         /* Pour la plupart des navigateurs */
+  -webkit-appearance: none; /* Pour Chrome/Safari */
+  -moz-appearance: none;    /* Pour Firefox */
+  background: none;         /* Retire le fond si nécessaire */
+  border: none;             /* Optionnel selon le style souhaité */
 }
 
 .profile-dropdown a:not(:last-child),
@@ -235,7 +241,7 @@
 .profile-dropdown a:hover,
 .profile-dropdown button:hover {
   background: linear-gradient(45deg, rgba(248, 182, 34, 0.1), rgba(254, 93, 0, 0.1));
-  color: #FE5D00;
+  color: #FF8F3F;
   padding-left: 25px;
 }
 
@@ -250,7 +256,7 @@
 
 .profile-dropdown a:hover i,
 .profile-dropdown button:hover i {
-  color: #FE5D00;
+  color: #FF8F3F;
 }
 
 .dropdown-item-danger {

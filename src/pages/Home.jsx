@@ -14,7 +14,7 @@ const Home = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setWordIndex((prevIndex) => (prevIndex + 1) % words.length);
-    }, 1000);
+    }, 1500);
 
     return () => clearInterval(interval);
   }, []);
@@ -81,7 +81,7 @@ const Home = () => {
       <section className="hero-section">
         <div className="hero-content">
           <h1 className="hero-title">
-            <span className="gradient-text">Collect</span>
+            <span className="gradient-text">Collection</span>
             <span className="typing-text">{words[wordIndex]}</span>
           </h1>
           <p className="hero-subtitle"><span className="mot-appuyer">Maximisez</span> la valeur de votre collection pour suivre et échanger vos cartes en toute simplicité avec <span className="mot-appuyer">CollectionR</span></p>

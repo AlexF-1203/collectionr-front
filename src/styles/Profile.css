@@ -16,10 +16,11 @@
 }
 
 .profile-container {
+
   display: grid;
   grid-template-columns: 300px 1fr;
   gap: 20px;
-  padding: 20px;
+  padding: 6rem;
   max-width: 1400px;
   margin: 0 auto;
   background-color: var(--bg-color);
@@ -358,7 +359,7 @@
   .profile-container {
     grid-template-columns: 1fr;
   }
-  
+
   .profile-sidebar {
     margin-bottom: 20px;
   }
@@ -369,17 +370,17 @@
     grid-template-columns: 1fr;
     text-align: center;
   }
-  
+
   .card-preview img {
     width: 100%;
     max-width: 200px;
     margin: 0 auto 15px;
   }
-  
+
   .card-info, .card-price-info {
     align-items: center;
   }
-  
+
   .content-tabs {
     overflow-x: auto;
     white-space: nowrap;
@@ -456,32 +457,32 @@
   .collections-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .collections-grid .card-preview {
     height: auto;
     grid-template-columns: 1fr;
     text-align: center;
     padding: 20px;
   }
-  
+
   .collections-grid .card-preview img {
     margin: 0 auto 15px;
   }
-  
+
   .collections-grid .card-info {
     align-items: center;
   }
-  
+
   .search-and-pagination {
     flex-direction: column;
     gap: 15px;
   }
-  
+
   .dropdown-container {
     max-width: 100%;
     width: 100%;
   }
-  
+
   .dropdown-menu {
     position: fixed;
     top: 50%;
@@ -492,20 +493,20 @@
     max-height: 80vh;
     z-index: 100;
   }
-  
+
   .dropdown-items {
     max-height: 50vh;
   }
-  
+
   .view-toggle {
     margin-left: 0;
     width: 100%;
   }
-  
+
   .toggle-button {
     width: 100%;
   }
-  
+
   .pagination {
     flex-wrap: wrap;
   }

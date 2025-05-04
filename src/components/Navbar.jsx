@@ -4,7 +4,7 @@ import '../styles/Navbar.css';
 import logoImage from '../assets/logo_collectionr.png';
 import api from '../api';
 
-const Navbar = ({ onSearch }) => {
+const Navbar = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
@@ -70,7 +70,7 @@ const Navbar = ({ onSearch }) => {
           <input
             type="text"
             className="search-input"
-            placeholder="Rechercher"
+            placeholder="Chercher une carte..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -93,12 +93,12 @@ const Navbar = ({ onSearch }) => {
                   <Link to="/profile" className="dropdown-item" onClick={() => setIsUserMenuOpen(false)}>
                     <i className="fa-solid fa-user"></i> User Profile
                   </Link>
-                  <Link to="/create-offer" className="dropdown-item" onClick={() => setIsUserMenuOpen(false)}>
+                  {/* <Link to="/create-offer" className="dropdown-item" onClick={() => setIsUserMenuOpen(false)}>
                     <i className="fa-solid fa-shop"></i> Create Offer
                   </Link>
                   <Link to="/purchases" className="dropdown-item" onClick={() => setIsUserMenuOpen(false)}>
                     <i className="fa-solid fa-bag-shopping"></i> My Purchases
-                  </Link>
+                  </Link> */}
                   <Link to="/settings" className="dropdown-item" onClick={() => setIsUserMenuOpen(false)}>
                     <i className="fa-solid fa-gear"></i> Settings
                   </Link>
