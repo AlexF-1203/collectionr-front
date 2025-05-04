@@ -10,8 +10,6 @@ const Cards = () => {
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
   const location = useLocation();
-  const params = new URLSearchParams(location.search);
-  const nameFilter = params.get('name') || '';
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -60,11 +58,10 @@ const Cards = () => {
 
   useEffect(() => {
     let filtered = [...allCards];
-    const search = filters.name || nameFilter;
 
-    if (search) {
+    if (filters.name && filters.name.trim() !== '') {
       filtered = filtered.filter(card =>
-        card.name?.toLowerCase().includes(search.toLowerCase())
+        card.name?.toLowerCase().includes(filters.name.toLowerCase().trim())
       );
     }
 
@@ -80,12 +77,14 @@ const Cards = () => {
 
     const newTotalPages = Math.ceil(filtered.length / cardsPerPage);
     setTotalPages(newTotalPages);
-    if (currentPage > newTotalPages) setCurrentPage(1);
 
-    const start = (currentPage - 1) * cardsPerPage;
+    const validPage = currentPage > newTotalPages ? 1 : currentPage;
+    const start = (validPage - 1) * cardsPerPage;
     const end = start + cardsPerPage;
     setCards(filtered.slice(start, end));
-  }, [filters, nameFilter, currentPage, allCards]);
+
+    if (currentPage !== validPage) setCurrentPage(validPage);
+  }, [filters, currentPage, allCards]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -103,6 +102,61 @@ const Cards = () => {
 
   const applyFilters = () => {
     setCurrentPage(1);
+  };
+
+  const renderPagination = () => {
+    if (totalPages <= 1) return null;
+
+    return (
+      <div className="pagination">
+        {currentPage > 1 && (
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            className="page-btn prev-btn"
+          >
+            <i className="fas fa-chevron-left"></i> Précédent
+          </button>
+        )}
+
+        <div className="page-numbers">
+          {(() => {
+            let pagesToShow = [];
+            if (totalPages <= 5) {
+              pagesToShow = Array.from({ length: totalPages }, (_, i) => i + 1);
+            } else if (currentPage <= 3) {
+              pagesToShow = [1, 2, 3, 4, 5];
+            } else if (currentPage >= totalPages - 2) {
+              pagesToShow = [totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+            } else {
+              pagesToShow = [currentPage - 2, currentPage - 1, currentPage, currentPage + 1, currentPage + 2];
+            }
+
+            return pagesToShow.map(page => (
+              <button
+                key={page}
+                onClick={() => handlePageChange(page)}
+                className={`page-number ${currentPage === page ? 'active' : ''}`}
+              >
+                {page}
+              </button>
+            ));
+          })()}
+
+          {totalPages > 5 && currentPage < totalPages - 2 && (
+            <span className="ellipsis">...</span>
+          )}
+        </div>
+
+        {currentPage < totalPages && (
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            className="page-btn next-btn"
+          >
+            Suivant <i className="fas fa-chevron-right"></i>
+          </button>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -187,6 +241,7 @@ const Cards = () => {
               ))}
             </div>
           )}
+          {renderPagination()}
         </>
       )}
     </div>
