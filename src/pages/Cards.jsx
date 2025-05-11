@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/Cards.css';
 import api from '../api';
 import LoadingIndicator from '../components/LoadingIndicator';
@@ -9,7 +9,7 @@ const Cards = () => {
   const [allCards, setAllCards] = useState([]);
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
-  const location = useLocation();
+  // const location = useLocation();
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -24,37 +24,37 @@ const Cards = () => {
 
   const [availableSets, setAvailableSets] = useState([]);
 
-  const fetchCards = async () => {
-    try {
-      const res = await api.get('/api/cards/');
-      return Array.isArray(res.data) ? res.data : res.data.results || [];
-    } catch {
-      const fallback = await api.get('/pokemon/cards/');
-      return Array.isArray(fallback.data) ? fallback.data : fallback.data.results || [];
-    }
-  };
+  // const fetchCards = async () => {
+  //   try {
+  //     const res = await api.get('/api/cards/');
+  //     return Array.isArray(res.data) ? res.data : res.data.results || [];
+  //   } catch (err) {
+  //     const fallback = await api.get('/pokemon/cards/');
+  //     return Array.isArray(fallback.data) ? fallback.data : fallback.data.results || [];
+  //   }
+  // };
 
-  useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      try {
-        const data = await fetchCards();
-        setAllCards(data);
-        setTotalPages(Math.ceil(data.length / cardsPerPage));
+  // useEffect(() => {
+  //   const loadData = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const data = await fetchCards();
+  //       setAllCards(data);
+  //       setTotalPages(Math.ceil(data.length / cardsPerPage));
 
-        const uniqueSets = [...new Set(data.map(card => card.set_name || card.set || "Set inconnu"))]
-          .map(name => ({ id: name, name }));
-        setAvailableSets(uniqueSets);
-        setError(null);
-      } catch (err) {
-        setError("Erreur de chargement des cartes");
-      } finally {
-        setLoading(false);
-      }
-    };
+  //       const uniqueSets = [...new Set(data.map(card => card.set_name || card.set || "Set inconnu"))]
+  //         .map(name => ({ id: name, name }));
+  //       setAvailableSets(uniqueSets);
+  //       setError(null);
+  //     } catch (err) {
+  //       setError("Erreur de chargement des cartes");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    loadData();
-  }, []);
+  //   loadData();
+  // }, []);
 
   useEffect(() => {
     let filtered = [...allCards];

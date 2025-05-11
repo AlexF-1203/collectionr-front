@@ -7,9 +7,9 @@ const Home = () => {
   const words = ['Trade', 'Discover', 'Share'];
   const [wordIndex, setWordIndex] = useState(0);
 
-  const [collectors, setCollectors] = useState(0);
-  const [cardsTraded, setCardsTraded] = useState(0);
-  const [collections, setCollections] = useState(0);
+  // const [collectors, setCollectors] = useState(0);
+  // const [cardsTraded, setCardsTraded] = useState(0);
+  // const [collections, setCollections] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -41,40 +41,40 @@ const Home = () => {
     animateValue(setCollections, 1500, 2000);
   }, []);
 
-  const trendingCards = [
-    {
-      name: 'Charizard VMAX',
-      set: 'Sword & Shield',
-      image: 'https://i.ebayimg.com/images/g/s-8AAOSwNX1hfqA3/s-l1200.jpg',
-      badge: { type: 'hot', text: 'Hot 🔥' },
-      priceChange: { value: 12.5, positive: true },
-      trades: 238
-    },
-    {
-      name: 'Mew V',
-      set: 'Scarlet & Violet',
-      image: 'https://pokemoms.fr/wp-content/uploads/2022/12/113_264_mew_v_pokemoms.jpg',
-      badge: { type: 'trending', text: 'Trending ⚡' },
-      priceChange: { value: 8.3, positive: true },
-      trades: 186
-    },
-    {
-      name: 'Pikachu VMAX',
-      set: 'Crown Zenith',
-      image: 'https://assets.pokemon.com/static-assets/content-assets/cms2-fr-fr/img/cards/web/SWSH4/SWSH4_FR_188.png',
-      badge: { type: 'new', text: 'New Release 🌟' },
-      priceChange: { value: 3.2, positive: false },
-      trades: 145
-    },
-    {
-      name: 'Mewtwo V',
-      set: 'Scarlet & Violet',
-      image: 'https://static.pkmcards.fr/cards/fr/pgo/image-cartes-a-collectionner-pokemon-card-game-tcg-pkmcards-pgo-fr-030-epee-et-bouclier-pokemon-go-mewtwo-v.webp',
-      badge: { type: 'hot', text: 'Hot 🔥' },
-      priceChange: { value: 15.7, positive: true },
-      trades: 212
-    }
-  ];
+  // const trendingCards = [
+  //   {
+  //     name: 'Charizard VMAX',
+  //     set: 'Sword & Shield',
+  //     image: 'https://i.ebayimg.com/images/g/s-8AAOSwNX1hfqA3/s-l1200.jpg',
+  //     badge: { type: 'hot', text: 'Hot 🔥' },
+  //     priceChange: { value: 12.5, positive: true },
+  //     trades: 238
+  //   },
+  //   {
+  //     name: 'Mew V',
+  //     set: 'Scarlet & Violet',
+  //     image: 'https://pokemoms.fr/wp-content/uploads/2022/12/113_264_mew_v_pokemoms.jpg',
+  //     badge: { type: 'trending', text: 'Trending ⚡' },
+  //     priceChange: { value: 8.3, positive: true },
+  //     trades: 186
+  //   },
+  //   {
+  //     name: 'Pikachu VMAX',
+  //     set: 'Crown Zenith',
+  //     image: 'https://assets.pokemon.com/static-assets/content-assets/cms2-fr-fr/img/cards/web/SWSH4/SWSH4_FR_188.png',
+  //     badge: { type: 'new', text: 'New Release 🌟' },
+  //     priceChange: { value: 3.2, positive: false },
+  //     trades: 145
+  //   },
+  //   {
+  //     name: 'Mewtwo V',
+  //     set: 'Scarlet & Violet',
+  //     image: 'https://static.pkmcards.fr/cards/fr/pgo/image-cartes-a-collectionner-pokemon-card-game-tcg-pkmcards-pgo-fr-030-epee-et-bouclier-pokemon-go-mewtwo-v.webp',
+  //     badge: { type: 'hot', text: 'Hot 🔥' },
+  //     priceChange: { value: 15.7, positive: true },
+  //     trades: 212
+  //   }
+  // ];
 
   return (
     <div className="home-container">

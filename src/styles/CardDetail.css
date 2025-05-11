@@ -109,6 +109,9 @@
   cursor: pointer;
   transition: all var(--transition-speed) ease;
   font-weight: 500;
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
 }
 
 .back-button:hover {
@@ -315,6 +318,7 @@ tcg-card {
 
 .data-point-hover {
   cursor: pointer;
+  pointer-events: all;
 }
 
 /* Tooltip élégant */

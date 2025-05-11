@@ -13,9 +13,6 @@ const Login = () => {
 
   const baseURL = import.meta.env.VITE_API_URL || "http://localhost:8000/";
 
-
-
-
   const handleSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
@@ -23,7 +20,6 @@ const Login = () => {
 
     try {
       console.log("Envoi de la requête de connexion...");
-      // Utiliser axios directement pour éviter les intercepteurs qui peuvent causer des boucles
       await axios.post(
         `${baseURL}/api/token/`,
         { username, password },
@@ -31,7 +27,6 @@ const Login = () => {
       );
 
       console.log("Connexion réussie, redirection...");
-      // Délai court pour permettre au navigateur de traiter les cookiese
       setTimeout(() => {
         window.location.href = "/";
       }, 100);

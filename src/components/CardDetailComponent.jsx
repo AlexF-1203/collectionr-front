@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import '../styles/CardDetail.css';
 import TCGCard from './TCGCard';
 
@@ -27,59 +27,58 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
 
     generatePriceHistoryData();
   }, [card]);
-  
-  // Effet séparé pour gérer les tooltips
+
   useEffect(() => {
     // Ajouter l'interaction pour les tooltips
     const setupTooltip = () => {
       const hoverPoints = document.querySelectorAll('.data-point-hover');
       const tooltip = document.querySelector('.price-tooltip');
-      
+
       if (!hoverPoints.length || !tooltip) return;
-      
+
       // Stocker les fonctions de gestionnaires d'événements pour le nettoyage
       const enterHandlers = [];
       const leaveHandlers = [];
-      
+
       hoverPoints.forEach((point, index) => {
         const handleMouseEnter = (e) => {
           const price = e.target.getAttribute('data-price');
           const day = e.target.getAttribute('data-day');
-          
+
           const tooltipDay = tooltip.querySelector('.tooltip-day span');
           const tooltipPrice = tooltip.querySelector('.tooltip-price span');
-          
+
           tooltipDay.textContent = day;
           tooltipPrice.textContent = price;
-          
+
           const rect = e.target.getBoundingClientRect();
           const chartRect = document.querySelector('.price-chart')?.getBoundingClientRect() || rect;
-          
+
           tooltip.style.opacity = '1';
           tooltip.style.visibility = 'visible';
-          
+
           // Positionner le tooltip par rapport au point
           const pointX = rect.left + rect.width/2 - chartRect.left;
           const pointY = rect.top - chartRect.top;
-          
+
           tooltip.style.left = `${pointX}px`;
           tooltip.style.top = `${pointY - 40}px`;
         };
-        
+
         const handleMouseLeave = () => {
           tooltip.style.opacity = '0';
           tooltip.style.visibility = 'hidden';
         };
-        
+
         // Stocker les références aux fonctions
         enterHandlers[index] = handleMouseEnter;
         leaveHandlers[index] = handleMouseLeave;
-        
+
         // Ajouter les écouteurs d'événements
         point.addEventListener('mouseenter', handleMouseEnter);
         point.addEventListener('mouseleave', handleMouseLeave);
       });
-      
+
       // Retourner une fonction de nettoyage qui supprime exactement les mêmes gestionnaires
       return () => {
         hoverPoints.forEach((point, index) => {
@@ -92,7 +91,7 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
         });
       };
     };
-    
+
     // Exécuter après le rendu du composant
     let cleanupFunction;
     if (priceHistory.length > 0) {
@@ -100,7 +99,7 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
       const timeoutId = setTimeout(() => {
         cleanupFunction = setupTooltip();
       }, 100);
-      
+
       // Nettoyer le timeout si le composant est démonté avant son exécution
       return () => {
         clearTimeout(timeoutId);
@@ -122,7 +121,7 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
 
     return '';
   };
-  
+
   if (!card) {
     return (
       <div className="cards-page">
@@ -166,7 +165,7 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
                       <div className="grid-line vertical"></div>
                       <div className="grid-line vertical"></div>
                     </div>
-                    
+
                     {/* SVG pour la courbe */}
                     <svg className="price-line" viewBox="0 0 100 100" preserveAspectRatio="none">
                       <defs>
@@ -179,10 +178,10 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
                           <feComposite in="SourceGraphic" in2="blur" operator="over" />
                         </filter>
                       </defs>
-                      
+
                       {/* Ligne du graphique */}
                       <polyline
-                        points={priceHistory.map((point, index) => {
+                        points={priceHistory.map((point) => {
                           const maxPrice = Math.max(...priceHistory.map(d => parseFloat(d.price)));
                           const minPrice = Math.min(...priceHistory.map(d => parseFloat(d.price)));
                           const range = maxPrice - minPrice || 1;
@@ -200,7 +199,7 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
                         strokeLinejoin="round"
                         filter="url(#glow)"
                       />
-                      
+
                       {/* Points aux jours 1, 7 et 30 */}
                       {priceHistory.map((point) => {
                         if (point.day === 1 || point.day === 7 || point.day === 30) {
@@ -237,7 +236,7 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
                         return null;
                       })}
                     </svg>
-                    
+
                     {/* Tooltip */}
                     <div className="price-tooltip">
                       <div className="tooltip-content">

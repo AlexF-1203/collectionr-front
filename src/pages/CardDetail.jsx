@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import CardDetailComponent from '../components/CardDetailComponent';
 import PriceChartGradient from '../components/PriceChartGradient';

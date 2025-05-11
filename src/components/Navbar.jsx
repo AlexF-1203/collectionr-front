@@ -4,7 +4,7 @@ import '../styles/Navbar.css';
 import logoImage from '../assets/logo_collectionr.png';
 import api from '../api';
 
-const Navbar = () => {
+const Navbar = ({ onOpenSettings }) => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
@@ -27,7 +27,7 @@ const Navbar = () => {
         authCheckDone.current = true;
         setIsLoggedIn(true);
         setUsername(response.data.username || '');
-      } catch (error) {
+      } catch (err) {
         authCheckDone.current = true;
         setIsLoggedIn(false);
         setUsername('');
@@ -45,7 +45,7 @@ const Navbar = () => {
       setIsLoggedIn(false);
       setIsUserMenuOpen(false);
       navigate('/login');
-    } catch (error) {
+    } catch (err) {
       navigate('/login');
     }
   };
@@ -99,9 +99,8 @@ const Navbar = () => {
                   <Link to="/purchases" className="dropdown-item" onClick={() => setIsUserMenuOpen(false)}>
                     <i className="fa-solid fa-bag-shopping"></i> My Purchases
                   </Link> */}
-                  <Link to="/settings" className="dropdown-item" onClick={() => setIsUserMenuOpen(false)}>
-                    <i className="fa-solid fa-gear"></i> Settings
-                  </Link>
+                  <button onClick={onOpenSettings}><i className="fa-solid fa-gear"></i> Settings</button>
+
                   <button onClick={handleLogout} className="dropdown-item dropdown-item-danger">
                     <i className="fa-solid fa-right-from-bracket"></i> Log Out
                   </button>
