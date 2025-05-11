@@ -1,4 +1,6 @@
 import GoogleButton from "react-google-button";
+import { FcGoogle } from 'react-icons/fc';
+import '../styles/Sign.css';
 
 const onGoogleLoginSuccess = () => {
   const GOOGLE_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
@@ -31,7 +33,12 @@ const onGoogleLoginSuccess = () => {
 };
 
 const LoginButton = () => {
-  return <GoogleButton onClick={onGoogleLoginSuccess} label="Sign in with Google"/>
-}
+  return (
+    <button onClick={onGoogleLoginSuccess} className="custom-google-btn">
+      <FcGoogle className="google-icon" />
+      <span>Se connecter avec Google</span>
+    </button>
+  );
+};
 
 export default LoginButton

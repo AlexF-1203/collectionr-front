@@ -36,9 +36,9 @@ const Home = () => {
       }, 16);
     };
 
-    animateValue(setCollectors, 20000, 2000);
-    animateValue(setCardsTraded, 150000, 2000);
-    animateValue(setCollections, 1500, 2000);
+    // animateValue(setCollectors, 20000, 2000);
+    // animateValue(setCardsTraded, 150000, 2000);
+    // animateValue(setCollections, 1500, 2000);
   }, []);
 
   // const trendingCards = [
