@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import PokemonCard from '../PokemonCard';
 import './styles.css';
-import { ACCESS_TOKEN } from '../../constants';  // Importez votre constante ACCESS_TOKEN
+import { ACCESS_TOKEN } from '../../constants';
 
 const PokemonCollection = () => {
   const [cards, setCards] = useState([]);
@@ -36,7 +36,7 @@ const PokemonCollection = () => {
 
       const data = await response.json();
       setCards(data.results);
-      setTotalPages(Math.ceil(data.count / 5)); // 5 est le nombre d'éléments par page
+      setTotalPages(Math.ceil(data.count / 5));
     } catch (error) {
       console.error('Erreur:', error);
       setError(error.message);

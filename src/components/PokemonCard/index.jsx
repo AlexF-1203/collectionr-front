@@ -1,7 +1,7 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import './styles.css';
 
-const PokemonCard = ({ 
+const PokemonCard = ({
   name,
   number,
   set,
@@ -42,7 +42,7 @@ const PokemonCard = ({
   };
 
   return (
-    <div 
+    <div
       ref={cardRef}
       className={cardClasses}
       data-number={number?.toString()}
@@ -59,7 +59,7 @@ const PokemonCard = ({
       }}
     >
       <div className="card__translater">
-        <div 
+        <div
           className="card__rotator"
           onMouseMove={handleMouseMove}
           onMouseEnter={() => setIsInteracting(true)}
@@ -74,8 +74,8 @@ const PokemonCard = ({
           }}
         >
           <div className="card__front">
-            <img 
-              src={images?.large} 
+            <img
+              src={images?.large}
               alt={name}
               loading="lazy"
               className="card__image"
@@ -91,4 +91,4 @@ const PokemonCard = ({
   );
 };
 
-export default PokemonCard; 
+export default PokemonCard;

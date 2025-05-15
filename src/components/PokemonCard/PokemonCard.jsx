@@ -1,5 +1,4 @@
-import React, { useRef, useEffect } from 'react';
-// import '../../assets/cards/index.css';
+import { useRef, useEffect } from 'react';
 import './styles.css';
 
 const PokemonCard = ({ card }) => {
@@ -27,7 +26,7 @@ const PokemonCard = ({ card }) => {
     if (!cardRef.current) return;
 
     const { left, top, width, height } = cardRef.current.getBoundingClientRect();
-    
+
     const fromLeft = (e.clientX - left) / width;
     const fromTop = (e.clientY - top) / height;
     const fromCenter = Math.sqrt(Math.pow(fromLeft - 0.5, 2) + Math.pow(fromTop - 0.5, 2));
@@ -38,16 +37,15 @@ const PokemonCard = ({ card }) => {
       cardRef.current.style.setProperty('--pointer-from-left', String(fromLeft));
       cardRef.current.style.setProperty('--pointer-from-top', String(fromTop));
       cardRef.current.style.setProperty('--pointer-from-center', String(fromCenter));
-      
-      // Réduction des angles de rotation
-      const rotateX = (fromTop - 0.5) * -10; // Réduit de -20 à -10
-      const rotateY = (fromLeft - 0.5) * 10; // Réduit de 20 à 10
-      const rotateZ = (fromLeft - 0.5) * 2; // Réduit de 5 à 2
-      
+
+      const rotateX = (fromTop - 0.5) * -10;
+      const rotateY = (fromLeft - 0.5) * 10;
+      const rotateZ = (fromLeft - 0.5) * 2;
+
       cardRef.current.style.setProperty('--card-rotate-x', `${rotateX}deg`);
       cardRef.current.style.setProperty('--card-rotate-y', `${rotateY}deg`);
       cardRef.current.style.setProperty('--card-rotate-z', `${rotateZ}deg`);
-      cardRef.current.style.setProperty('--card-opacity', String(0.3 + fromCenter * 0.2)); // Réduit l'opacité
+      cardRef.current.style.setProperty('--card-opacity', String(0.3 + fromCenter * 0.2));
     });
   };
 
@@ -55,7 +53,7 @@ const PokemonCard = ({ card }) => {
     if (!cardRef.current) return;
     const touch = e.touches[0];
     const { left, top, width, height } = cardRef.current.getBoundingClientRect();
-    
+
     const mx = ((touch.clientX - left) / width) * 2 - 1;
     const my = ((touch.clientY - top) / height) * 2 - 1;
 
@@ -69,7 +67,7 @@ const PokemonCard = ({ card }) => {
   };
 
   return (
-    <div 
+    <div
       ref={cardRef}
       className="card"
       data-rarity={normalizeRarity(card.rarity)}
@@ -100,9 +98,9 @@ const PokemonCard = ({ card }) => {
       <div className="card__translater">
         <div className="card__rotator">
           <div className="card__front">
-            <img 
-              className="card__image" 
-              src={card.images.large} 
+            <img
+              className="card__image"
+              src={card.images.large}
               alt={card.name}
               loading="lazy"
             />

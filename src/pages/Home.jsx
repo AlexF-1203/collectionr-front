@@ -19,27 +19,27 @@ const Home = () => {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    const animateValue = (setter, end, duration) => {
-      const start = 0;
-      const increment = end / (duration / 16);
-      let current = start;
+  // useEffect(() => {
+  //   const animateValue = (setter, end, duration) => {
+  //     const start = 0;
+  //     const increment = end / (duration / 16);
+  //     let current = start;
 
-      const timer = setInterval(() => {
-        current += increment;
-        if (current >= end) {
-          setter(end);
-          clearInterval(timer);
-        } else {
-          setter(Math.floor(current));
-        }
-      }, 16);
-    };
+  //     const timer = setInterval(() => {
+  //       current += increment;
+  //       if (current >= end) {
+  //         setter(end);
+  //         clearInterval(timer);
+  //       } else {
+  //         setter(Math.floor(current));
+  //       }
+  //     }, 16);
+  //   };
 
-    // animateValue(setCollectors, 20000, 2000);
-    // animateValue(setCardsTraded, 150000, 2000);
-    // animateValue(setCollections, 1500, 2000);
-  }, []);
+  //   // animateValue(setCollectors, 20000, 2000);
+  //   // animateValue(setCardsTraded, 150000, 2000);
+  //   // animateValue(setCollections, 1500, 2000);
+  // }, []);
 
   // const trendingCards = [
   //   {
