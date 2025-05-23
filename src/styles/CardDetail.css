@@ -19,7 +19,7 @@
   min-height: 100vh;
   background-color: #000000;
   color: var(--text-primary);
-  padding: 6rem;
+  padding: 4.5rem;
   position: relative;
   overflow: hidden;
 }
@@ -185,12 +185,12 @@
 }
 
 /* Style pour le Web Component TCGCard */
-tcg-card {
+/* tcg-card {
   display: block !important;
-  width: 100% !important;
-  height: 450px !important;
+  width: 90% !important;
+  height: 400px !important;
   margin: 0 auto;
-}
+} */
 
 .section-title {
   font-size: 1.5rem;
@@ -216,8 +216,8 @@ tcg-card {
 
 /* ====== GRAPHIQUE PRIX AMÉLIORÉ ====== */
 .price-history-card {
-  background: var(--card-bg-gradient);
-  padding: 30px;
+  /* background: var(--card-bg-gradient); */
+  padding: 40px;
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-normal);
   border: 1px solid var(--border-light);
@@ -372,22 +372,23 @@ tcg-card {
 .price-chart-labels {
   display: flex;
   justify-content: space-between;
-  color: var(--text-secondary);
-  font-size: 0.8rem;
-  padding: 0 5px;
-  margin-top: 5px;
+  text-align: center;
+  margin-top: 12px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
 }
 
 .price-range {
   position: absolute;
-  left: -50px;
+  left: -35px;
   top: 0;
   height: 160px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   color: var(--text-secondary);
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   padding: 0;
 }
 
@@ -399,6 +400,13 @@ tcg-card {
   to {
     stroke-dashoffset: 0;
   }
+}
+
+.price-line path {
+  stroke-dasharray: 500;
+  stroke-dashoffset: 500;
+  animation: drawLine 2s ease-out forwards;
+  filter: drop-shadow(0 0 6px rgba(255, 165, 0, 0.5));
 }
 
 .price-line polyline {
