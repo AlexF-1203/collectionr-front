@@ -10,6 +10,7 @@ import PokemonCollection from './components/PokemonCollection';
 import Cards from './pages/Cards';
 import CardDetail from "./pages/CardDetail";
 import Profile from './pages/Profile';
+import News from './pages/News';
 import AuthCallback from './components/AuthCallback';
 import Settings from './components/Settings'; // n'oublie pas cette ligne
 import './components/TCGCard';
@@ -56,6 +57,7 @@ function App() {
         <Route path="/cards" element={<ProtectedRoute><Cards /></ProtectedRoute>} />
         <Route path="/cards/:id" element={<ProtectedRoute><CardDetail /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/news" element={<ProtectedRoute><News /></ProtectedRoute>} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

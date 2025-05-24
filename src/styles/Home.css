@@ -149,6 +149,11 @@ body {
   margin-bottom: 2rem;
 }
 
+.cta-content p {
+  text-align: center;
+  padding: 0.5rem 0 3rem;
+}
+
 .cta-buttons {
   display: flex;
   gap: 1rem;
@@ -745,7 +750,7 @@ body {
 .cta-section {
   position: relative;
   padding: 3rem 8%;
-  background: linear-gradient(45deg, #FF8F3F, #F8B622);
+  background: linear-gradient(145deg, rgb(0, 0, 0), rgb(2, 2, 2));
   color: white;
   text-align: center;
   overflow: hidden;

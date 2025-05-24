@@ -115,27 +115,27 @@ const Home = () => {
       </section>
 
       <section className="features-section">
-        <h2 className="section-title">Why choose us?</h2>
+        <h2 className="section-title">Pourquoi nous choisir ?</h2>
         <div className="features-grid">
           <div className="feature-card">
             <i className="fas fa-chart-line feature-icon"></i>
-            <h3>Real-time tracking</h3>
-            <p>Monitor your collections value and market trends</p>
+            <h3>Suivi en temps réel</h3>
+            <p>Surveillez la valeur de votre collection et les tendances du marché</p>
           </div>
           <div className="feature-card">
             <i className="fas fa-shield-alt feature-icon"></i>
-            <h3>Secure trading</h3>
-            <p>Secure trading system with satisfaction guarantee</p>
+            <h3>Échange sécurisé</h3>
+            <p>Système d'échange sécurisé avec garantie de satisfaction</p>
           </div>
           <div className="feature-card">
             <i className="fas fa-users feature-icon"></i>
-            <h3>Active community</h3>
-            <p>Join a passionate community of collectors</p>
+            <h3>Communauté active</h3>
+            <p>Rejoignez une communauté passionnée de collectionneurs</p>
           </div>
           <div className="feature-card">
             <i className="fas fa-qrcode feature-icon"></i>
-            <h3>Smart scanning</h3>
-            <p>Scan your cards to add them instantly</p>
+            <h3>Scan intelligent</h3>
+            <p>Scannez vos cartes pour les ajouter instantanément</p>
           </div>
         </div>
       </section>
@@ -165,7 +165,7 @@ const Home = () => {
         </div>
       </section> */}
 
-      <section className="community-section">
+      {/* <section className="community-section">
         <div className="community-content">
           <h2 className="section-title">Join the community</h2>
           <p className="community-description">
@@ -190,13 +190,13 @@ const Home = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       <section className="cta-section">
         <div className="cta-content">
-          <h2>Ready to start your collection?</h2>
-          <p>Join us today and start collecting</p>
-          <Link to="/signup" className="cta-button">Create an account</Link>
+          <h2>Prêt à commencer ta collection ?</h2>
+          <p>Rejoignez-nous aujourd'hui et commencez à collectionner</p>
+          <Link to="/signup" className="primary-btn">Créer un compte</Link>
         </div>
         <div className="cta-background"></div>
       </section>

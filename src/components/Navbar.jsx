@@ -60,10 +60,11 @@ const Navbar = ({ onOpenSettings }) => {
 
       <div className="nav-content">
         <ul className="nav-links">
-          <Link to="/" className="nav-item">Home</Link>
-          <Link to="/collection" className="nav-item">Collection</Link>
-          <Link to="/cards" className="nav-item">Cards</Link>
-          <Link to="/marketplace" className="nav-item">Marketplace</Link>
+          <Link to="/" className="nav-item">Acceuil</Link>
+          {/* <Link to="/collection" className="nav-item">Collection</Link> */}
+          <Link to="/cards" className="nav-item">Cartes</Link>
+          <Link to="/news" className="nav-item">Actualités</Link>
+          {/* <Link to="/marketplace" className="nav-item">Marketplace</Link> */}
         </ul>
 
         <form className="search-form" onSubmit={handleSubmit}>
