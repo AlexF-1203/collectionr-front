@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/Home.css';
+import '../styles/Button.css';
 
 const Home = () => {
   // const [currentWord, setCurrentWord] = useState('');

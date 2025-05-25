@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import api from '../api';
 import '../styles/Profile.css';
 
@@ -28,30 +28,30 @@ const ProfileComponent = () => {
     const fetchUserData = async () => {
       setLoading(true);
       setError(null);
-      
+
       try {
         console.log("Récupération des données utilisateur...");
         console.log("URL de base de l'API:", api.defaults.baseURL);
-        
+
         console.log("Envoi de la requête au endpoint /api/user/profile/");
         const userResponse = await api.get('/api/user/profile/');
         console.log("Réponse utilisateur reçue:", userResponse.status);
-        
+
         if (userResponse.data) {
           console.log("Données utilisateur récupérées:", userResponse.data);
           setUser(userResponse.data);
-          
+
           console.log("Envoi de la requête au endpoint /api/user/profile/data/");
           const profileResponse = await api.get('/api/user/profile/data/');
           console.log("Réponse profil reçue:", profileResponse.status);
-          
+
           if (profileResponse.data) {
             const data = profileResponse.data;
             console.log("Données profil récupérées:", data);
-            
+
             const userSets = data.sets || data.collections?.pokemon || [];
             console.log("Sets récupérés:", userSets);
-            
+
             setProfileData({
               totalCards: data.totalCards || 0,
               cardsBySets: data.cardsBySets || 0,
@@ -63,15 +63,15 @@ const ProfileComponent = () => {
             });
           }
         }
-        
+
         setLoading(false);
       } catch (error) {
         console.error("Erreur lors de la récupération des données:", error);
-        
+
         if (error.response) {
           console.log("Statut de l'erreur:", error.response.status);
           console.log("Données de l'erreur:", error.response.data);
-          
+
           if (error.response.status === 401) {
             console.log("Erreur 401: Non autorisé");
             setError("Session expirée. Veuillez vous reconnecter.");
@@ -88,11 +88,11 @@ const ProfileComponent = () => {
           console.log("Erreur:", error.message);
           setError(`Erreur: ${error.message}`);
         }
-        
+
         setLoading(false);
       }
     };
-    
+
     fetchUserData();
   }, []);
 
@@ -100,7 +100,7 @@ const ProfileComponent = () => {
     if (selectedSet) {
       return [selectedSet];
     }
-    return profileData.sets.filter(set => 
+    return profileData.sets.filter(set =>
       set.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [profileData.sets, searchTerm, selectedSet]);
@@ -134,7 +134,7 @@ const ProfileComponent = () => {
       console.log("Tous les favoris:", favoritesResponse.data);
 
       const favoriToDelete = favoritesResponse.data.find(fav => fav.card.id === cardId);
-      
+
       if (!favoriToDelete) {
         console.error(`Aucun favori trouvé pour la carte ${cardId}`);
         alert("Impossible de supprimer ce favori");
@@ -147,7 +147,7 @@ const ProfileComponent = () => {
         ...prevData,
         favoriteCards: prevData.favoriteCards.filter(card => card.id !== cardId)
       }));
-      
+
       console.log("Suppression réussie");
     } catch (error) {
       console.error("Erreur lors de la suppression:", error);
@@ -219,7 +219,7 @@ const ProfileComponent = () => {
   const renderActivityTab = () => (
     <div className="content-section">
       <h3>Activité récente</h3>
-      
+
       {profileData.recentCards.length > 0 ? (
         profileData.recentCards.map(card => (
           <div className="card-preview" key={card.id}>
@@ -250,16 +250,16 @@ const ProfileComponent = () => {
   const renderCollectionsTab = () => (
     <div className="content-section">
       <h3>Sets Pokémon</h3>
-      
+
       <div className="search-and-pagination">
         <div className="dropdown-container">
-          <button 
-            className="dropdown-button" 
+          <button
+            className="dropdown-button"
             onClick={toggleDropdown}
           >
             {selectedSet ? selectedSet.title : 'Sélectionner un set'} {isDropdownOpen ? '▲' : '▼'}
           </button>
-          
+
           {isDropdownOpen && (
             <div className="dropdown-menu">
               <div className="dropdown-search">
@@ -275,8 +275,8 @@ const ProfileComponent = () => {
                 {profileData.sets
                   .filter(set => set.title.toLowerCase().includes(searchTerm.toLowerCase()))
                   .map((set, index) => (
-                    <div 
-                      key={set.id || index} 
+                    <div
+                      key={set.id || index}
                       className="dropdown-item"
                       onClick={() => handleSetSelect(set)}
                     >
@@ -287,8 +287,8 @@ const ProfileComponent = () => {
               </div>
               {selectedSet && (
                 <div className="dropdown-footer">
-                  <button 
-                    className="clear-selection" 
+                  <button
+                    className="clear-selection"
                     onClick={(e) => {
                       e.stopPropagation();
                       clearSelection();
@@ -301,10 +301,10 @@ const ProfileComponent = () => {
             </div>
           )}
         </div>
-        
+
         <div className="view-toggle">
-          <button 
-            className="toggle-button" 
+          <button
+            className="toggle-button"
             onClick={toggleExpandedView}
             disabled={selectedSet !== null}
           >
@@ -312,15 +312,15 @@ const ProfileComponent = () => {
           </button>
         </div>
       </div>
-      
+
       <div className="collections-grid">
         {currentSets && currentSets.length > 0 ? (
           currentSets.map((set, index) => (
             <div className="card-preview" key={set.id || index}>
               <div className="set-image-container">
-                <img 
-                  src={set.imageUrl || set.image_url} 
-                  alt={set.title} 
+                <img
+                  src={set.imageUrl || set.image_url}
+                  alt={set.title}
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = `https://via.placeholder.com/150x130?text=${set.title}`;
@@ -333,9 +333,9 @@ const ProfileComponent = () => {
                   <span className="card-set">{set.releaseDate}</span>
                 </div>
                 <div className="card-collection">
-                  {set.ownedCards !== undefined && set.totalCards !== undefined ? 
+                  {set.ownedCards !== undefined && set.totalCards !== undefined ?
                     `${set.ownedCards}/${set.totalCards} cartes • ${set.progress}% complet` :
-                    set.total_cards !== undefined ? 
+                    set.total_cards !== undefined ?
                       `0/${set.total_cards} cartes • 0% complet` :
                       'Collection en cours'
                   }
@@ -350,22 +350,22 @@ const ProfileComponent = () => {
           </div>
         )}
       </div>
-      
+
       {!expandedView && !selectedSet && filteredSets.length > setsPerPage && (
         <div className="pagination">
-          <button 
+          <button
             className="pagination-button"
             disabled={currentPage === 1}
             onClick={() => handlePageChange(currentPage - 1)}
           >
             &laquo; Précédent
           </button>
-          
+
           <div className="page-info">
             Page {currentPage} sur {totalPages}
           </div>
-          
-          <button 
+
+          <button
             className="pagination-button"
             disabled={currentPage === totalPages}
             onClick={() => handlePageChange(currentPage + 1)}
@@ -380,12 +380,12 @@ const ProfileComponent = () => {
   const renderFavoritesTab = () => (
     <div className="content-section">
       <h3>Cartes favorites</h3>
-      
+
       {profileData.favoriteCards.length > 0 ? (
         profileData.favoriteCards.map(card => (
           <div className="card-preview" key={card.id}>
-            <button 
-              className="remove-btn" 
+            <button
+              className="remove-btn"
               onClick={() => handleRemoveFavorite(card.id)}
             >
               ×
@@ -426,12 +426,12 @@ const ProfileComponent = () => {
             </div>
           )}
         </div>
-        
+
         <div className="user-info">
           <div className="user-handle">@{user.username}</div>
           <div className="user-email">{user.email}</div>
         </div>
-        
+
         <div className="user-stats">
           <div className="stat">
             <div className="stat-value">{profileData.totalCards}</div>
@@ -447,23 +447,23 @@ const ProfileComponent = () => {
           </div>
         </div>
       </div>
-      
+
       <div className="profile-main">
         <div className="content-tabs">
-          <button 
-            className={`tab ${activeTab === 'activity' ? 'active' : ''}`} 
+          <button
+            className={`tab ${activeTab === 'activity' ? 'active' : ''}`}
             onClick={() => handleTabChange('activity')}
           >
             Activité
           </button>
-          <button 
-            className={`tab ${activeTab === 'collections' ? 'active' : ''}`} 
+          <button
+            className={`tab ${activeTab === 'collections' ? 'active' : ''}`}
             onClick={() => handleTabChange('collections')}
           >
             Sets
           </button>
-          <button 
-            className={`tab ${activeTab === 'favoris' ? 'active' : ''}`} 
+          <button
+            className={`tab ${activeTab === 'favoris' ? 'active' : ''}`}
             onClick={() => handleTabChange('favoris')}
           >
             Favoris

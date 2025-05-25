@@ -112,7 +112,7 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
   };
 
   return (
-    <div className="card-detail-wrapper">
+    <div className="page-container">
       <div className="card-detail-container">
         <button className="back-button" onClick={onBack}>
           <span className="back-icon">←</span> Retour à ma collection

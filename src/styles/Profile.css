@@ -1,6 +1,4 @@
 :root {
-  --primary-color: #FF8F3F;
-  --secondary-color: #F8B622;
   --text-primary: #ffffff;
   --text-secondary: rgba(255, 255, 255, 0.7);
   --bg-color: #1e1e1e;
@@ -11,8 +9,7 @@
   --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.4);
   --accent-gradient: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
   --border-radius: 15px;
-  --positive-color: #4CAF50;
-  --negative-color: #F44336;
+
 }
 
 .profile-container {

@@ -160,7 +160,7 @@ const Cards = () => {
   };
 
   return (
-    <div className="cards-page">
+    <div className="page-container">
       <h1 className="page-title">Ma Collection de Cartes</h1>
       <div className="filters">
         <div className="filter-group">
