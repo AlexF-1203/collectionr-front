@@ -1,18 +1,16 @@
 import { useState } from "react";
 import axios from "axios"; // Utiliser axios directement
 import PropTypes from 'prop-types';
-import { useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
 import LoadingIndicator from "../components/LoadingIndicator";
 import '../styles/Sign.css';
+import Googleauth from "../components/Google_auth";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  
-  // URL de base pour l'API
+
   const baseURL = import.meta.env.VITE_API_URL || "http://localhost:8000/";
 
   const handleSubmit = async (e) => {
@@ -22,15 +20,13 @@ const Login = () => {
 
     try {
       console.log("Envoi de la requête de connexion...");
-      // Utiliser axios directement pour éviter les intercepteurs qui peuvent causer des boucles
       await axios.post(
-        `${baseURL}/api/token/`, 
+        `${baseURL}/api/token/`,
         { username, password },
         { withCredentials: true }
       );
-      
+
       console.log("Connexion réussie, redirection...");
-      // Délai court pour permettre au navigateur de traiter les cookiese
       setTimeout(() => {
         window.location.href = "/";
       }, 100);
@@ -64,6 +60,7 @@ const Login = () => {
           {loading && <LoadingIndicator />}
           <div className="form-actions">
             <button type="submit" className="button-shine">Login</button>
+            <Googleauth />
           </div>
         </form>
         <div className="form-links">

@@ -1,95 +1,96 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/Home.css';
+import '../styles/Button.css';
 
 const Home = () => {
   // const [currentWord, setCurrentWord] = useState('');
   const words = ['Trade', 'Discover', 'Share'];
   const [wordIndex, setWordIndex] = useState(0);
 
-  const [collectors, setCollectors] = useState(0);
-  const [cardsTraded, setCardsTraded] = useState(0);
-  const [collections, setCollections] = useState(0);
+  // const [collectors, setCollectors] = useState(0);
+  // const [cardsTraded, setCardsTraded] = useState(0);
+  // const [collections, setCollections] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setWordIndex((prevIndex) => (prevIndex + 1) % words.length);
-    }, 1000);
+    }, 1500);
 
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    const animateValue = (setter, end, duration) => {
-      const start = 0;
-      const increment = end / (duration / 16);
-      let current = start;
+  // useEffect(() => {
+  //   const animateValue = (setter, end, duration) => {
+  //     const start = 0;
+  //     const increment = end / (duration / 16);
+  //     let current = start;
 
-      const timer = setInterval(() => {
-        current += increment;
-        if (current >= end) {
-          setter(end);
-          clearInterval(timer);
-        } else {
-          setter(Math.floor(current));
-        }
-      }, 16);
-    };
+  //     const timer = setInterval(() => {
+  //       current += increment;
+  //       if (current >= end) {
+  //         setter(end);
+  //         clearInterval(timer);
+  //       } else {
+  //         setter(Math.floor(current));
+  //       }
+  //     }, 16);
+  //   };
 
-    animateValue(setCollectors, 20000, 2000);
-    animateValue(setCardsTraded, 150000, 2000);
-    animateValue(setCollections, 1500, 2000);
-  }, []);
+  //   // animateValue(setCollectors, 20000, 2000);
+  //   // animateValue(setCardsTraded, 150000, 2000);
+  //   // animateValue(setCollections, 1500, 2000);
+  // }, []);
 
-  const trendingCards = [
-    {
-      name: 'Charizard VMAX',
-      set: 'Sword & Shield',
-      image: 'https://i.ebayimg.com/images/g/s-8AAOSwNX1hfqA3/s-l1200.jpg',
-      badge: { type: 'hot', text: 'Hot 🔥' },
-      priceChange: { value: 12.5, positive: true },
-      trades: 238
-    },
-    {
-      name: 'Mew V',
-      set: 'Scarlet & Violet',
-      image: 'https://pokemoms.fr/wp-content/uploads/2022/12/113_264_mew_v_pokemoms.jpg',
-      badge: { type: 'trending', text: 'Trending ⚡' },
-      priceChange: { value: 8.3, positive: true },
-      trades: 186
-    },
-    {
-      name: 'Pikachu VMAX',
-      set: 'Crown Zenith',
-      image: 'https://assets.pokemon.com/static-assets/content-assets/cms2-fr-fr/img/cards/web/SWSH4/SWSH4_FR_188.png',
-      badge: { type: 'new', text: 'New Release 🌟' },
-      priceChange: { value: 3.2, positive: false },
-      trades: 145
-    },
-    {
-      name: 'Mewtwo V',
-      set: 'Scarlet & Violet',
-      image: 'https://static.pkmcards.fr/cards/fr/pgo/image-cartes-a-collectionner-pokemon-card-game-tcg-pkmcards-pgo-fr-030-epee-et-bouclier-pokemon-go-mewtwo-v.webp',
-      badge: { type: 'hot', text: 'Hot 🔥' },
-      priceChange: { value: 15.7, positive: true },
-      trades: 212
-    }
-  ];
+  // const trendingCards = [
+  //   {
+  //     name: 'Charizard VMAX',
+  //     set: 'Sword & Shield',
+  //     image: 'https://i.ebayimg.com/images/g/s-8AAOSwNX1hfqA3/s-l1200.jpg',
+  //     badge: { type: 'hot', text: 'Hot 🔥' },
+  //     priceChange: { value: 12.5, positive: true },
+  //     trades: 238
+  //   },
+  //   {
+  //     name: 'Mew V',
+  //     set: 'Scarlet & Violet',
+  //     image: 'https://pokemoms.fr/wp-content/uploads/2022/12/113_264_mew_v_pokemoms.jpg',
+  //     badge: { type: 'trending', text: 'Trending ⚡' },
+  //     priceChange: { value: 8.3, positive: true },
+  //     trades: 186
+  //   },
+  //   {
+  //     name: 'Pikachu VMAX',
+  //     set: 'Crown Zenith',
+  //     image: 'https://assets.pokemon.com/static-assets/content-assets/cms2-fr-fr/img/cards/web/SWSH4/SWSH4_FR_188.png',
+  //     badge: { type: 'new', text: 'New Release 🌟' },
+  //     priceChange: { value: 3.2, positive: false },
+  //     trades: 145
+  //   },
+  //   {
+  //     name: 'Mewtwo V',
+  //     set: 'Scarlet & Violet',
+  //     image: 'https://static.pkmcards.fr/cards/fr/pgo/image-cartes-a-collectionner-pokemon-card-game-tcg-pkmcards-pgo-fr-030-epee-et-bouclier-pokemon-go-mewtwo-v.webp',
+  //     badge: { type: 'hot', text: 'Hot 🔥' },
+  //     priceChange: { value: 15.7, positive: true },
+  //     trades: 212
+  //   }
+  // ];
 
   return (
     <div className="home-container">
       <section className="hero-section">
         <div className="hero-content">
           <h1 className="hero-title">
-            <span className="gradient-text">Collect</span>
+            <span className="gradient-text">Collection</span>
             <span className="typing-text">{words[wordIndex]}</span>
           </h1>
-          <p className="hero-subtitle">Your next-generation Pokémon card collection platform</p>
+          <p className="hero-subtitle"><span className="mot-appuyer">Maximisez</span> la valeur de votre collection pour suivre et échanger vos cartes en toute simplicité avec <span className="mot-appuyer">CollectionR</span></p>
           <div className="cta-buttons">
             <Link to="/signup" className="primary-btn">Start the adventure</Link>
             <Link to="/cards" className="secondary-btn">Discover cards</Link>
           </div>
-          <div className="hero-stats">
+          {/* <div className="hero-stats">
             <div className="stat-item">
               <span className="stat-number">{collectors}</span>
               <span className="stat-label">Collectors</span>
@@ -102,44 +103,45 @@ const Home = () => {
               <span className="stat-number">{collections}</span>
               <span className="stat-label">Collections</span>
             </div>
-          </div>
+          </div> */}
         </div>
         <div className="hero-image">
           <div className="floating-cards">
-            <img src="https://images.pokemontcg.io/base1/58.png" alt="Pokemon Card" className="card-1" />
-            <img src="https://images.pokemontcg.io/neo1/17.png" alt="Pokemon Card" className="card-2" />
-            <img src="https://images.pokemontcg.io/base1/58.png" alt="Pokemon Card" className="card-3" />
+            <img src="https://images.pokemontcg.io/sv8pt5/161_hires.png" alt="Charizard VMAX" className="card-1 animated-card" />
+            <img src="https://images.pokemontcg.io/swsh45sv/SV122_hires.png" alt="Blastoise EX Full Art" className="card-2 animated-card" />
+            <img src="https://images.pokemontcg.io/swsh12pt5/160_hires.png" alt="Charizard Base Set" className="card-3 animated-card" />
+            <img src="https://images.pokemontcg.io/swsh45sv/SV107_hires.png" alt="Pikachu VMAX Rainbow Rare" className="card-4 animated-card" />
           </div>
         </div>
       </section>
 
       <section className="features-section">
-        <h2 className="section-title">Why choose us?</h2>
+        <h2 className="section-title">Pourquoi nous choisir ?</h2>
         <div className="features-grid">
           <div className="feature-card">
             <i className="fas fa-chart-line feature-icon"></i>
-            <h3>Real-time tracking</h3>
-            <p>Monitor your collections value and market trends</p>
+            <h3>Suivi en temps réel</h3>
+            <p>Surveillez la valeur de votre collection et les tendances du marché</p>
           </div>
           <div className="feature-card">
             <i className="fas fa-shield-alt feature-icon"></i>
-            <h3>Secure trading</h3>
-            <p>Secure trading system with satisfaction guarantee</p>
+            <h3>Échange sécurisé</h3>
+            <p>Système d'échange sécurisé avec garantie de satisfaction</p>
           </div>
           <div className="feature-card">
             <i className="fas fa-users feature-icon"></i>
-            <h3>Active community</h3>
-            <p>Join a passionate community of collectors</p>
+            <h3>Communauté active</h3>
+            <p>Rejoignez une communauté passionnée de collectionneurs</p>
           </div>
           <div className="feature-card">
             <i className="fas fa-qrcode feature-icon"></i>
-            <h3>Smart scanning</h3>
-            <p>Scan your cards to add them instantly</p>
+            <h3>Scan intelligent</h3>
+            <p>Scannez vos cartes pour les ajouter instantanément</p>
           </div>
         </div>
       </section>
 
-      <section className="market-trends">
+      {/* <section className="market-trends">
         <h2 className="section-title">Today's Hot Cards</h2>
         <div className="trends-container">
           {trendingCards.map((card, index) => (
@@ -162,9 +164,9 @@ const Home = () => {
             </div>
           ))}
         </div>
-      </section>
+      </section> */}
 
-      <section className="community-section">
+      {/* <section className="community-section">
         <div className="community-content">
           <h2 className="section-title">Join the community</h2>
           <p className="community-description">
@@ -189,13 +191,13 @@ const Home = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       <section className="cta-section">
         <div className="cta-content">
-          <h2>Ready to start your collection?</h2>
-          <p>Join us today and start collecting</p>
-          <Link to="/signup" className="cta-button">Create an account</Link>
+          <h2>Prêt à commencer ta collection ?</h2>
+          <p>Rejoignez-nous aujourd'hui et commencez à collectionner</p>
+          <Link to="/signup" className="primary-btn">Créer un compte</Link>
         </div>
         <div className="cta-background"></div>
       </section>

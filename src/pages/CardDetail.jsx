@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import CardDetailComponent from '../components/CardDetailComponent';
 import PriceChartGradient from '../components/PriceChartGradient';
@@ -44,7 +44,7 @@ const CardDetail = () => {
 
   if (loading) {
     return (
-      <div className="cards-page">
+      <div className="page-container">
         <div className="loading-container">
           <div className="loader"></div>
           <p className="loading-text">Chargement des détails de la carte...</p>
@@ -55,7 +55,7 @@ const CardDetail = () => {
 
   if (error) {
     return (
-      <div className="cards-page">
+      <div className="page-container">
         <div className="error-container">
           <div className="error-icon">!</div>
           <div className="error-message">{error}</div>

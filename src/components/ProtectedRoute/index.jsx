@@ -4,7 +4,7 @@ import { ACCESS_TOKEN } from '../../constants';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem(ACCESS_TOKEN);
-  
+
   if (!token) {
     return <Navigate to="/login" replace />;
   }
@@ -12,4 +12,4 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-export default ProtectedRoute; 
+export default ProtectedRoute;

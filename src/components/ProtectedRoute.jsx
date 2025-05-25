@@ -16,11 +16,11 @@ function ProtectedRoute({ children }) {
 
             try {
                 console.log("ProtectedRoute: vérification d'authentification");
-                
-                await axios.get(`${baseURL}/api/user/profile/`, { 
-                    withCredentials: true 
+
+                await axios.get(`${baseURL}/api/user/profile/`, {
+                    withCredentials: true
                 });
-                
+
                 console.log("ProtectedRoute: utilisateur authentifié");
                 setIsAuthorized(true);
             } catch (error) {
