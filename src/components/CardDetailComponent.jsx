@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import '../styles/CardDetail.css';
+import { RARITY_COLORS } from '../constants/';
 import TCGCard from './TCGCard';
 
 const CardDetailComponent = ({ card, onBack = () => {} }) => {
@@ -28,7 +29,7 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
   const getImageUrl = (card) => {
     if (!card) return '';
     if (card.image_url && card.image_url !== 'null') return card.image_url;
-    if (card.set_id && card.number) return `https://images.pokemontcg.io/${card.set_id}/${card.number}_hires.png`;
+    if (card.set && card.number) return `${card.image_url}`;
     return '';
   };
 
@@ -111,6 +112,22 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
     );
   };
 
+  const rarity = card.rarity || 'UNKNOWN';
+  const colorValue = RARITY_COLORS[rarity] || RARITY_COLORS.UNKNOWN;
+  const isGradient = rarity === 'RAINBOWRARE';
+
+  const rarityStyle = isGradient
+    ? {
+        background: colorValue,
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        fontWeight: 'bold',
+      }
+    : {
+        color: colorValue,
+        fontWeight: 'bold',
+      };
+
   return (
     <div className="page-container">
       <div className="card-detail-container">
@@ -161,11 +178,13 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
             <div className="stats-grid">
               <div className="stat-card">
                 <h3 className="stat-title">SET</h3>
-                <p className="stat-value">{card.set_name || card.set || 'Set inconnu'}</p>
+                <p className="stat-value">{card.set?.title || 'Set inconnu'}</p>
               </div>
               <div className="stat-card">
                 <h3 className="stat-title">RARETÉ</h3>
-                <p className="stat-value">{card.rarity || 'Rareté inconnue'}</p>
+                <p className="stat-value" style={rarityStyle}>
+                  {rarity}
+                </p>
               </div>
               <div className="stat-card">
                 <h3 className="stat-title">PRIX ACTUEL</h3>
