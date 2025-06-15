@@ -45,8 +45,6 @@ function App() {
       <Navbar onOpenSettings={() => setSettingsOpen(true)} />
       <Settings isOpen={isSettingsOpen} onClose={() => setSettingsOpen(false)} user={user} setUser={setUser} />
 
-      {/* <button onClick={() => setSettingsOpen(true)}>Ouvrir paramètres</button> */}
-
       <Routes>
         <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
         <Route path="/login" element={<Login route="/api/token/" method="login" />} />

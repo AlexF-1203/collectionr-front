@@ -9,7 +9,6 @@ const Cards = () => {
   const [allCards, setAllCards] = useState([]);
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
-  // const location = useLocation();
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -42,8 +41,14 @@ const Cards = () => {
         setAllCards(data);
         setTotalPages(Math.ceil(data.length / cardsPerPage));
 
-        const uniqueSets = [...new Set(data.map(card => card.set_name || card.set || "Set inconnu"))]
-          .map(name => ({ id: name, name }));
+        const uniqueSets = [...new Set(
+          data.map(card => {
+            if (typeof card.set === 'object' && card.set?.title) return card.set.title;
+            if (typeof card.set === 'string') return card.set;
+            return card.set_name || "Set inconnu";
+          })
+        )].map(name => ({ id: name, name }));
+
         setAvailableSets(uniqueSets);
         setError(null);
       } catch (err) {
@@ -67,7 +72,8 @@ const Cards = () => {
 
     if (filters.set !== 'all') {
       filtered = filtered.filter(card =>
-        [card.set_id, card.set, card.setCode, card.set_code, card.set_name].includes(filters.set)
+        [card.set_id, card.set, card.setCode, card.set_code, card.set_name]
+          .includes(filters.set)
       );
     }
 
@@ -186,7 +192,12 @@ const Cards = () => {
           >
             <option value="all">Tous les Sets</option>
             {availableSets.map(set => (
-              <option key={set.id} value={set.id}>{set.name}</option>
+              <option
+                key={typeof set.id === 'string' ? set.id : JSON.stringify(set.id)}
+                value={typeof set.id === 'string' ? set.id : ''}
+              >
+                {typeof set.name === 'string' ? set.name : 'Nom invalide'}
+              </option>
             ))}
           </select>
         </div>
@@ -200,12 +211,7 @@ const Cards = () => {
             onChange={handleFilterChange}
           >
             <option value="all">Toutes les Raretés</option>
-            <option value="COMMON">Commune</option>
-            <option value="UNCOMMON">Peu Commune</option>
-            <option value="RARE">Rare</option>
-            <option value="HOLORARE">Holo Rare</option>
-            <option value="ULTRARARE">Ultra Rare</option>
-            <option value="SECRETRARE">Secret Rare</option>
+            <option value="UNKNOWN">Inconnue</option>
           </select>
         </div>
 
@@ -234,7 +240,13 @@ const Cards = () => {
                   </div>
                   <div className="card-info">
                     <h3 className="card-name">{card.name || "Sans nom"}</h3>
-                    <p className="card-set">{card.set_name || card.set || "Set inconnu"}</p>
+                    <p className="card-set">
+                      {typeof card.set === 'object' && card.set?.title
+                        ? card.set.title
+                        : typeof card.set === 'string'
+                        ? card.set
+                        : 'Set inconnu'}
+                    </p>
                     <p className="card-rarity">{card.rarity || "Rareté inconnue"}</p>
                   </div>
                 </div>
