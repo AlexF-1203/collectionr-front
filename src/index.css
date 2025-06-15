@@ -1,8 +1,8 @@
 /* @import "src/styles/Button.css"; */
 
 :root {
-  --primary-color: #FF8F3F;
-  --secondary-color: #F8B622;
+  --primary-color: #5038DB;
+  --secondary-color: #503db9;
   --text-color: #222;
   --background-color: hsl(0, 0%, 98%);
   --card-bg: rgba(255, 255, 255, 0.8);
