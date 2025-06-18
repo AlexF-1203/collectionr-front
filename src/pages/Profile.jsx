@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import api from '../api';
 import '../styles/Profile.css';
 
@@ -16,6 +16,8 @@ const ProfileComponent = () => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
@@ -95,6 +97,79 @@ const ProfileComponent = () => {
 
     fetchUserData();
   }, []);
+
+  const handleImageUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Vérifier le type de fichier
+    if (!file.type.startsWith('image/')) {
+      alert('Veuillez sélectionner un fichier image valide.');
+      return;
+    }
+
+    // Vérifier la taille du fichier (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Le fichier est trop volumineux. Taille maximale : 5MB.');
+      return;
+    }
+
+    setUploadingImage(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('profile_picture', file);  // Correspond au nom du champ dans le modèle
+
+      console.log("Upload de l'image...");
+      console.log("Fichier sélectionné:", file.name, file.size, file.type);
+
+      const response = await api.patch('/api/user/update/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      console.log("Réponse complète de l'upload:", response.data);
+      console.log("URL de l'image dans la réponse:", response.data.profile_picture);
+      console.log("Utilisateur avant mise à jour:", user);
+
+      // Mettre à jour l'état utilisateur avec la nouvelle image
+      setUser(prevUser => {
+        const updatedUser = {
+          ...prevUser,
+          profilePicture: response.data.profile_picture
+        };
+        console.log("Utilisateur après mise à jour:", updatedUser);
+        return updatedUser;
+      });
+
+      console.log("Photo de profil mise à jour avec succès");
+    } catch (error) {
+      console.error("Erreur lors de l'upload:", error);
+      console.error("Détails de l'erreur:", error.response?.data);
+
+      if (error.response) {
+        const errorMessage = error.response.data.profile_picture
+          ? error.response.data.profile_picture[0]
+          : error.response.data.error || 'Erreur serveur';
+        alert(`Erreur lors de l'upload: ${errorMessage}`);
+      } else {
+        alert("Erreur lors de l'upload de l'image");
+      }
+    } finally {
+      setUploadingImage(false);
+      // Réinitialiser l'input file
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleAvatarClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
 
   const filteredSets = useMemo(() => {
     if (selectedSet) {
@@ -227,7 +302,7 @@ const ProfileComponent = () => {
             <div className="card-info">
               <div className="card-header">
                 <h4>{card.name}</h4>
-                <span className="card-set">{card.set}</span>
+                <span className="card-set">{card.set.title}</span>
               </div>
             </div>
             <div className="card-price-info">
@@ -302,7 +377,7 @@ const ProfileComponent = () => {
           )}
         </div>
 
-        <div className="view-toggle">
+        {/* <div className="view-toggle">
           <button
             className="toggle-button"
             onClick={toggleExpandedView}
@@ -310,7 +385,7 @@ const ProfileComponent = () => {
           >
             {expandedView ? 'Afficher moins' : 'Afficher tout'}
           </button>
-        </div>
+        </div> */}
       </div>
 
       <div className="collections-grid">
@@ -333,12 +408,34 @@ const ProfileComponent = () => {
                   <span className="card-set">{set.releaseDate}</span>
                 </div>
                 <div className="card-collection">
-                  {set.ownedCards !== undefined && set.totalCards !== undefined ?
-                    `${set.ownedCards}/${set.totalCards} cartes • ${set.progress}% complet` :
-                    set.total_cards !== undefined ?
-                      `0/${set.total_cards} cartes • 0% complet` :
-                      'Collection en cours'
-                  }
+                  {set.ownedCards !== undefined && set.totalCards !== undefined ? (
+                    <>
+                      <div className="collection-text">
+                        {set.ownedCards}/{set.totalCards} cartes • {set.progress}% complet
+                      </div>
+                      <div className="progress-bar-wrapper">
+                        <div className="progress-bar-container">
+                          <div
+                            className="progress-bar-fill"
+                            style={{ width: `${set.progress}%` }}
+                          />
+                        </div>
+                      </div>
+                    </>
+                  ) : set.total_cards !== undefined ? (
+                    <>
+                      <div className="collection-text">
+                        0/{set.total_cards} cartes • 0% complet
+                      </div>
+                      <div className="progress-bar-wrapper">
+                        <div className="progress-bar-container">
+                          <div className="progress-bar-fill" style={{ width: `0%` }} />
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div>Collection en cours</div>
+                  )}
                 </div>
               </div>
             </div>
@@ -394,7 +491,7 @@ const ProfileComponent = () => {
             <div className="card-info">
               <div className="card-header">
                 <h4>{card.name}</h4>
-                <span className="card-set">{card.set}</span>
+                <span className="card-set">{card.set.title}</span>
               </div>
             </div>
             <div className="card-price-info">
@@ -415,65 +512,82 @@ const ProfileComponent = () => {
   );
 
   return (
-    <div className="profile-container">
-      <div className="profile-sidebar">
-        <div className="user-avatar">
-          {user.profilePicture ? (
-            <img src={user.profilePicture} alt={user.username} />
-          ) : (
-            <div className="avatar-placeholder">
-              {user.username ? user.username.charAt(0).toUpperCase() : 'A'}
+    <div className="unique-container">
+      <div className="profile-container">
+        <div className="profile-sidebar">
+          <div className="user-avatar" onClick={handleAvatarClick}>
+            <img
+              src={
+                user.profilePicture?.startsWith('http')
+                  ? user.profilePicture
+                  : `http://localhost:8000${user.profilePicture}`
+              }
+            />
+            <div className="avatar-overlay">
+              {uploadingImage ? (
+                <div className="upload-spinner">⏳</div>
+              ) : (
+                <div className="camera-icon">📷</div>
+              )}
             </div>
-          )}
-        </div>
-
-        <div className="user-info">
-          <div className="user-handle">@{user.username}</div>
-          <div className="user-email">{user.email}</div>
-        </div>
-
-        <div className="user-stats">
-          <div className="stat">
-            <div className="stat-value">{profileData.totalCards}</div>
-            <div className="stat-label">Cartes</div>
           </div>
-          <div className="stat">
-            <div className="stat-value">{profileData.cardsBySets}</div>
-            <div className="stat-label">Sets</div>
+
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleImageUpload}
+            accept="image/*"
+            style={{ display: 'none' }}
+          />
+
+          <div className="user-info">
+            <div className="user-handle">@{user.username}</div>
+            <div className="user-email">{user.email}</div>
           </div>
-          <div className="stat">
-            <div className="stat-value">{profileData.collectionValue.toFixed(2)} €</div>
-            <div className="stat-label">Valeur</div>
+
+          <div className="user-stats">
+            <div className="stat">
+              <div className="stat-value">{profileData.totalCards}</div>
+              <div className="stat-label">Cartes</div>
+            </div>
+            <div className="stat">
+              <div className="stat-value">{profileData.cardsBySets}</div>
+              <div className="stat-label">Sets</div>
+            </div>
+            <div className="stat">
+              <div className="stat-value">{profileData.collectionValue.toFixed(2)} €</div>
+              <div className="stat-label">Valeur</div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="profile-main">
-        <div className="content-tabs">
-          <button
-            className={`tab ${activeTab === 'activity' ? 'active' : ''}`}
-            onClick={() => handleTabChange('activity')}
-          >
-            Activité
-          </button>
-          <button
-            className={`tab ${activeTab === 'collections' ? 'active' : ''}`}
-            onClick={() => handleTabChange('collections')}
-          >
-            Sets
-          </button>
-          <button
-            className={`tab ${activeTab === 'favoris' ? 'active' : ''}`}
-            onClick={() => handleTabChange('favoris')}
-          >
-            Favoris
-          </button>
-        </div>
+        <div className="profile-main">
+          <div className="content-tabs">
+            <button
+              className={`tab ${activeTab === 'activity' ? 'active' : ''}`}
+              onClick={() => handleTabChange('activity')}
+            >
+              Activité
+            </button>
+            <button
+              className={`tab ${activeTab === 'collections' ? 'active' : ''}`}
+              onClick={() => handleTabChange('collections')}
+            >
+              Sets
+            </button>
+            <button
+              className={`tab ${activeTab === 'favoris' ? 'active' : ''}`}
+              onClick={() => handleTabChange('favoris')}
+            >
+              Favoris
+            </button>
+          </div>
 
-        <div className="tab-content">
-          {activeTab === 'activity' && renderActivityTab()}
-          {activeTab === 'collections' && renderCollectionsTab()}
-          {activeTab === 'favoris' && renderFavoritesTab()}
+          <div className="tab-content">
+            {activeTab === 'activity' && renderActivityTab()}
+            {activeTab === 'collections' && renderCollectionsTab()}
+            {activeTab === 'favoris' && renderFavoritesTab()}
+          </div>
         </div>
       </div>
     </div>

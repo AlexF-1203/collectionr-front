@@ -114,7 +114,7 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
 
   const rarity = card.rarity || 'UNKNOWN';
   const colorValue = RARITY_COLORS[rarity] || RARITY_COLORS.UNKNOWN;
-  const isGradient = rarity === 'RAINBOWRARE';
+  const isGradient = rarity;
 
   const rarityStyle = isGradient
     ? {
