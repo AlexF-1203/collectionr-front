@@ -376,16 +376,6 @@ const ProfileComponent = () => {
             </div>
           )}
         </div>
-
-        {/* <div className="view-toggle">
-          <button
-            className="toggle-button"
-            onClick={toggleExpandedView}
-            disabled={selectedSet !== null}
-          >
-            {expandedView ? 'Afficher moins' : 'Afficher tout'}
-          </button>
-        </div> */}
       </div>
 
       <div className="collections-grid">

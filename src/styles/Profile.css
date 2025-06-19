@@ -1,25 +1,3 @@
-/* ========== GLOBAL ========== */
-html, body {
-  height: 100%;
-  margin: 0;
-  overflow: hidden;
-  font-family: sans-serif;
-}
-
-/* :root {
-  --text-primary: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --bg-color: #1e1e1e;
-  --card-bg: #2c2c2c;
-  --card-hover: #3a3a3a;
-  --border-light: rgba(255, 255, 255, 0.1);
-  --shadow-normal: 0 4px 15px rgba(0, 0, 0, 0.3);
-  --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.4);
-  --accent-gradient: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-  --border-radius: 15px;
-} */
-
-/* ========== LAYOUT ========== */
 .unique-container {
   padding: 0 !important;
   margin: 0 !important;
@@ -112,7 +90,6 @@ html, body {
   box-shadow: var(--shadow-normal);
 }
 
-/* ========== SCROLLABLE CONTENT ========== */
 
 .content-tabs {
   display: flex;
@@ -134,8 +111,6 @@ html, body {
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
 }
-
-/* ========== PROFILE INFO ========== */
 
 .user-avatar {
   width: 120px;
@@ -208,8 +183,6 @@ html, body {
   margin-top: 3px;
 }
 
-/* ========== TABS ========== */
-
 .tab {
   padding: 15px 25px;
   background: none;
@@ -241,8 +214,6 @@ html, body {
   border-radius: 3px 3px 0 0;
 }
 
-/* ========== CONTENT ========== */
-
 .content-section {
   animation: fadeIn 0.3s ease;
 }
@@ -252,8 +223,6 @@ html, body {
   margin-bottom: 20px;
   color: var(--text-primary);
 }
-
-/* ========== CARD PREVIEW ========== */
 
 .card-preview {
   display: grid;
@@ -298,8 +267,6 @@ html, body {
   color: var(--text-secondary);
 }
 
-/* ========== PRICE INFO ========== */
-
 .card-price-info {
   display: flex;
   flex-direction: column;
@@ -330,8 +297,6 @@ html, body {
   background-color: rgba(244, 67, 54, 0.1);
 }
 
-/* ========== REMOVE BUTTON ========== */
-
 .remove-btn {
   position: absolute;
   top: 10px;
@@ -355,8 +320,6 @@ html, body {
   color: white;
 }
 
-/* ========== EMPTY STATE ========== */
-
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -377,8 +340,6 @@ html, body {
   font-size: 16px;
 }
 
-/* ========== COLLECTIONS ========== */
-
 .collection-text {
   text-align: center;
   font-size: 0.85rem;
@@ -391,7 +352,7 @@ html, body {
 }
 
 .progress-bar-container {
-  width: 60%; /* rétrécir la taille */
+  width: 60%;
   height: 6px;
   background-color: #eee;
   border-radius: 4px;
@@ -443,7 +404,6 @@ html, body {
     position: fixed;
     top: 50%;
     left: 50%;
-    /* transform: translate(-50%, -50%); */
     width: 90%;
     max-width: 350px;
     max-height: 80vh;
@@ -680,7 +640,6 @@ html, body {
   100% { transform: rotate(360deg); }
 }
 
-/* ========== MEDIA QUERIES ========== */
 
 @media (max-width: 1024px) {
   .profile-container {

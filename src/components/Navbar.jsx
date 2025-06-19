@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Navbar.css';
+import SearchBar from './SearchBar';
 import logoImage from '../assets/logo_collectionr.png';
 import api from '../api';
 
 const Navbar = ({ onOpenSettings }) => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
   const [username, setUsername] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const authCheckDone = useRef(false);
@@ -15,7 +17,7 @@ const Navbar = ({ onOpenSettings }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (searchTerm.trim()) {
-      navigate(`/cards?name=${encodeURIComponent(searchTerm.trim())}`);
+      navigate(`/cards/search?q=${encodeURIComponent(searchTerm.trim())}`);
     }
   };
   useEffect(() => {
@@ -26,6 +28,7 @@ const Navbar = ({ onOpenSettings }) => {
         const response = await api.get('/api/user/profile/');
         authCheckDone.current = true;
         setIsLoggedIn(true);
+        setUser(response.data);
         setUsername(response.data.username || '');
       } catch (err) {
         authCheckDone.current = true;
@@ -66,19 +69,7 @@ const Navbar = ({ onOpenSettings }) => {
           <Link to="/news" className="nav-item">Actualités</Link>
           {/* <Link to="/marketplace" className="nav-item">Marketplace</Link> */}
         </ul>
-
-        <form className="search-form" onSubmit={handleSubmit}>
-          <input
-            type="text"
-            className="search-input"
-            placeholder="Chercher une carte..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <button type="submit" className="search-button">
-            <i className="fa fa-search"></i>
-          </button>
-        </form>
+        <SearchBar />
       </div>
 
       <div className="user-profile">
@@ -86,7 +77,19 @@ const Navbar = ({ onOpenSettings }) => {
           {isLoggedIn ? (
             <div className="dropdown-container">
               <button onClick={toggleUserMenu} className="profile-btn">
-                <i className="fa-solid fa-user-large user-icon"></i>
+                {user?.profilePicture ? (
+                  <img
+                    src={
+                      user.profilePicture.startsWith('http')
+                        ? user.profilePicture
+                        : `http://localhost:8000${user.profilePicture}`
+                    }
+                    alt="Profile"
+                    className="user-avatar-icon"
+                  />
+                ) : (
+                  <i className="fa-solid fa-user-large user-icon"></i>
+                )}
               </button>
 
               {isUserMenuOpen && (

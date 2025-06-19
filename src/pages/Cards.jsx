@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import '../styles/Cards.css';
 import api from '../api';
 import LoadingIndicator from '../components/LoadingIndicator';
+import { RARITY_COLORS } from '../constants';
 
 const Cards = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [allCards, setAllCards] = useState([]);
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const cardsPerPage = 30;
@@ -39,6 +42,10 @@ const Cards = () => {
       try {
         const data = await fetchCards();
         setAllCards(data);
+
+        const nameInURL = new URLSearchParams(location.search).get("name") || "";
+        setFilters(prev => ({ ...prev, name: nameInURL }));
+
         setTotalPages(Math.ceil(data.length / cardsPerPage));
 
         const uniqueSets = [...new Set(
@@ -59,7 +66,14 @@ const Cards = () => {
     };
 
     loadData();
-  }, []);
+  }, [location.search]);
+
+  useEffect(() => {
+    if (!loading) {
+      const allRarities = [...new Set(allCards.map(card => card.rarity))];
+      console.log("Raretés détectées :", allRarities);
+    }
+  }, [loading, allCards]);
 
   useEffect(() => {
     let filtered = [...allCards];
@@ -72,8 +86,7 @@ const Cards = () => {
 
     if (filters.set !== 'all') {
       filtered = filtered.filter(card =>
-        [card.set_id, card.set, card.setCode, card.set_code, card.set_name]
-          .includes(filters.set)
+        String(card.set?.title) === String(filters.set)
       );
     }
 
@@ -211,7 +224,13 @@ const Cards = () => {
             onChange={handleFilterChange}
           >
             <option value="all">Toutes les Raretés</option>
-            <option value="UNKNOWN">Inconnue</option>
+            {[...new Set(allCards.map(card => card.rarity))]
+              .filter(r => !!r)
+              .map(rarity => (
+                <option key={rarity} value={rarity}>
+                  {rarity}
+                </option>
+              ))}
           </select>
         </div>
 
@@ -240,14 +259,38 @@ const Cards = () => {
                   </div>
                   <div className="card-info">
                     <h3 className="card-name">{card.name || "Sans nom"}</h3>
-                    <p className="card-set">
-                      {typeof card.set === 'object' && card.set?.title
-                        ? card.set.title
-                        : typeof card.set === 'string'
-                        ? card.set
-                        : 'Set inconnu'}
+                    <div className="card-set-info">
+                      <p className="card-set">
+                        {typeof card.set === 'object' && card.set?.title
+                          ? card.set.title
+                          : typeof card.set === 'string'
+                          ? card.set
+                          : 'Set inconnu'}
+                      </p>
+                      <img
+                        src={card.set.symbol_url}
+                        alt="Symbole du set"
+                        className="symbol-card"
+                      />
+                    </div>
+                    <p
+                      className="card-rarity"
+                      style={{
+                        ...(RARITY_COLORS[card.rarity]
+                          ? {
+                              background: RARITY_COLORS[card.rarity],
+                              WebkitBackgroundClip: 'text',
+                              WebkitTextFillColor: 'transparent',
+                              fontWeight: 'bold',
+                            }
+                          : {
+                              color: '#888',
+                              fontWeight: 'bold',
+                            }),
+                      }}
+                    >
+                      {card.rarity || 'Rareté inconnue'}
                     </p>
-                    <p className="card-rarity">{card.rarity || "Rareté inconnue"}</p>
                   </div>
                 </div>
               ))}
