@@ -9,17 +9,9 @@ const Navbar = ({ onOpenSettings }) => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
-  const [username, setUsername] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
   const authCheckDone = useRef(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (searchTerm.trim()) {
-      navigate(`/cards/search?q=${encodeURIComponent(searchTerm.trim())}`);
-    }
-  };
   useEffect(() => {
     const checkAuth = async () => {
       if (authCheckDone.current || window.location.pathname === "/login") return;
@@ -29,11 +21,9 @@ const Navbar = ({ onOpenSettings }) => {
         authCheckDone.current = true;
         setIsLoggedIn(true);
         setUser(response.data);
-        setUsername(response.data.username || '');
       } catch (err) {
         authCheckDone.current = true;
         setIsLoggedIn(false);
-        setUsername('');
       }
     };
 
@@ -64,10 +54,8 @@ const Navbar = ({ onOpenSettings }) => {
       <div className="nav-content">
         <ul className="nav-links">
           <Link to="/" className="nav-item">Acceuil</Link>
-          {/* <Link to="/collection" className="nav-item">Collection</Link> */}
           <Link to="/cards" className="nav-item">Cartes</Link>
           <Link to="/news" className="nav-item">Actualités</Link>
-          {/* <Link to="/marketplace" className="nav-item">Marketplace</Link> */}
         </ul>
         <SearchBar />
       </div>
@@ -79,11 +67,9 @@ const Navbar = ({ onOpenSettings }) => {
               <button onClick={toggleUserMenu} className="profile-btn">
                 {user?.profilePicture ? (
                   <img
-                    src={
-                      user.profilePicture.startsWith('http')
-                        ? user.profilePicture
-                        : `http://localhost:8000${user.profilePicture}`
-                    }
+                    src={user.profilePicture.startsWith('http')
+                      ? user.profilePicture
+                      : `http://localhost:8000${user.profilePicture}`}
                     alt="Profile"
                     className="user-avatar-icon"
                   />
@@ -97,14 +83,9 @@ const Navbar = ({ onOpenSettings }) => {
                   <Link to="/profile" className="dropdown-item" onClick={() => setIsUserMenuOpen(false)}>
                     <i className="fa-solid fa-user"></i> User Profile
                   </Link>
-                  {/* <Link to="/create-offer" className="dropdown-item" onClick={() => setIsUserMenuOpen(false)}>
-                    <i className="fa-solid fa-shop"></i> Create Offer
-                  </Link>
-                  <Link to="/purchases" className="dropdown-item" onClick={() => setIsUserMenuOpen(false)}>
-                    <i className="fa-solid fa-bag-shopping"></i> My Purchases
-                  </Link> */}
-                  <button onClick={onOpenSettings}><i className="fa-solid fa-gear"></i> Settings</button>
-
+                  <button onClick={onOpenSettings}>
+                    <i className="fa-solid fa-gear"></i> Settings
+                  </button>
                   <button onClick={handleLogout} className="dropdown-item dropdown-item-danger">
                     <i className="fa-solid fa-right-from-bracket"></i> Log Out
                   </button>

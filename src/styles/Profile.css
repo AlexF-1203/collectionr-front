@@ -234,12 +234,32 @@
   margin-bottom: 15px;
   position: relative;
   transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.05); /* ajouté */
+  overflow: hidden; /* ajouté pour contenir ::before */
+}
+
+.card-preview::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s ease;
 }
 
 .card-preview:hover {
   background-color: var(--card-shadow-hover);
   transform: translateY(-2px);
   box-shadow: var(--shadow-hover);
+  border-color: rgba(255, 143, 63, 0.3); /* effet de survol */
+}
+
+.card-preview:hover::before {
+  transform: scaleX(1);
 }
 
 .card-preview img {
