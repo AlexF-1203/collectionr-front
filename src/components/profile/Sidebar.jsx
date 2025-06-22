@@ -2,7 +2,7 @@ const Sidebar = ({ user, uploadingImage, onAvatarClick, onImageUpload, fileInput
   <div className="profile-sidebar">
     <div className="user-avatar" onClick={onAvatarClick}>
       <img
-        src={user.profilePicture?.startsWith('http') ? user.profilePicture : `http://localhost:8000${user.profilePicture}`}
+        src={user.profilePicture?.startsWith('http') ? user.profilePicture : `${import.meta.env.VITE_API_URL}${user.profilePicture}`}
         alt="Avatar"
       />
       <div className="avatar-overlay">

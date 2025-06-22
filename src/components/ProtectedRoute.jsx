@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 
 function ProtectedRoute({ children }) {
     const [isAuthorized, setIsAuthorized] = useState(null);
-    const baseURL = import.meta.env.VITE_API_URL || "http://localhost:8000/";
+    const baseURL = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
         const checkAuth = async () => {

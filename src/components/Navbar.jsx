@@ -69,7 +69,7 @@ const Navbar = ({ onOpenSettings }) => {
                   <img
                     src={user.profilePicture.startsWith('http')
                       ? user.profilePicture
-                      : `http://localhost:8000${user.profilePicture}`}
+                      : `${import.meta.env.VITE_API_URL}${user.profilePicture}`}
                     alt="Profile"
                     className="user-avatar-icon"
                   />

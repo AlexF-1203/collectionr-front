@@ -17,7 +17,7 @@ const PokemonCollection = () => {
         throw new Error('Vous devez être connecté pour voir la collection');
       }
 
-      const response = await fetch(`http://localhost:8000/api/pokemon/cards/?page=${page}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pokemon/cards/?page=${page}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
