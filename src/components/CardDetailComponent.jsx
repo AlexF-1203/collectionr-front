@@ -3,7 +3,7 @@ import '../styles/CardDetail.css';
 import { RARITY_COLORS } from '../constants/';
 import TCGCard from './TCGCard';
 
-const CardDetailComponent = ({ card, onBack = () => {} }) => {
+const CardDetailComponent = ({ card, onBack, onAddFavorite = () => {} }) => {
   const [priceHistory, setPriceHistory] = useState([]);
   const tooltipRef = useRef(null);
 
@@ -15,7 +15,7 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
 
     for (let i = 30; i >= 1; i--) {
       const price = dailyPrices[`day_${i}`];
-      if (price !== undefined) {
+      if (price !== undefined && price !== null) {
         data.push({
           day: i,
           price: parseFloat(price).toFixed(2)
@@ -26,16 +26,18 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
     setPriceHistory(data);
   }, [card]);
 
+
   const getImageUrl = (card) => {
     if (!card) return '';
     if (card.image_url && card.image_url !== 'null') return card.image_url;
-    if (card.set && card.number) return `${card.image_url}`;
     return '';
   };
 
   const generateSmoothPath = (points) => {
-    if (points.length < 2) return '';
+    if (!points || points.length < 2) return '';
+
     let d = `M ${points[0].x},${points[0].y}`;
+
     for (let i = 1; i < points.length; i++) {
       const prev = points[i - 1];
       const curr = points[i];
@@ -43,13 +45,17 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
       const midY = (prev.y + curr.y) / 2;
       d += ` Q ${prev.x},${prev.y} ${midX},${midY}`;
     }
+
     d += ` T ${points[points.length - 1].x},${points[points.length - 1].y}`;
     return d;
   };
 
   const renderGraph = () => {
-    const maxPrice = Math.max(...priceHistory.map(d => parseFloat(d.price)));
-    const minPrice = Math.min(...priceHistory.map(d => parseFloat(d.price)));
+    if (!priceHistory || priceHistory.length === 0) return null;
+
+    const prices = priceHistory.map(d => parseFloat(d.price));
+    const maxPrice = Math.max(...prices);
+    const minPrice = Math.min(...prices);
     const range = maxPrice - minPrice || 1;
 
     const svgPoints = priceHistory.map((point, index) => {
@@ -66,26 +72,39 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
         viewBox="0 0 100 100"
         preserveAspectRatio="none"
         onMouseMove={(e) => {
-          const svg = e.currentTarget;
-          const { left, width } = svg.getBoundingClientRect();
-          const x = ((e.clientX - left) / width) * 100;
+          try {
+            const svg = e.currentTarget;
+            const rect = svg.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
 
-          const closest = svgPoints.reduce((a, b) =>
-            Math.abs(b.x - x) < Math.abs(a.x - x) ? b : a
-          );
+            const closest = svgPoints.reduce((a, b) =>
+              Math.abs(b.x - x) < Math.abs(a.x - x) ? b : a
+            );
 
-          if (tooltipRef.current) {
-            tooltipRef.current.style.opacity = 1;
-            tooltipRef.current.style.visibility = 'visible';
-            tooltipRef.current.style.left = `${closest.x}%`;
-            tooltipRef.current.style.top = `${closest.y}%`;
-            tooltipRef.current.innerHTML = `<div class='tooltip-content'><div class='tooltip-day'>Jour ${closest.day}</div><div class='tooltip-price'>$${closest.price}</div></div>`;
+            if (tooltipRef.current) {
+              tooltipRef.current.style.opacity = '1';
+              tooltipRef.current.style.visibility = 'visible';
+              tooltipRef.current.style.left = `${closest.x}%`;
+              tooltipRef.current.style.top = `${closest.y}%`;
+              tooltipRef.current.innerHTML = `
+                <div class='tooltip-content'>
+                  <div class='tooltip-day'>Jour ${closest.day}</div>
+                  <div class='tooltip-price'>$${closest.price}</div>
+                </div>
+              `;
+            }
+          } catch (error) {
+            console.error('Erreur tooltip:', error);
           }
         }}
         onMouseLeave={() => {
-          if (tooltipRef.current) {
-            tooltipRef.current.style.opacity = 0;
-            tooltipRef.current.style.visibility = 'hidden';
+          try {
+            if (tooltipRef.current) {
+              tooltipRef.current.style.opacity = '0';
+              tooltipRef.current.style.visibility = 'hidden';
+            }
+          } catch (error) {
+            console.error('Erreur tooltip leave:', error);
           }
         }}
       >
@@ -112,9 +131,26 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
     );
   };
 
+  // Protection contre card undefined
+  if (!card) {
+    return (
+      <div className="page-container">
+        <div className="card-detail-container">
+          <button className="back-button" onClick={onBack}>
+            <span className="back-icon">←</span> Retour à ma collection
+          </button>
+          <div className="error-message">
+            <h2>Erreur: Aucune carte sélectionnée</h2>
+            <p>Veuillez retourner à votre collection et sélectionner une carte.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const rarity = card.rarity || 'UNKNOWN';
-  const colorValue = RARITY_COLORS[rarity] || RARITY_COLORS.UNKNOWN;
-  const isGradient = rarity;
+  const colorValue = RARITY_COLORS?.[rarity] || RARITY_COLORS?.UNKNOWN || '#666';
+  const isGradient = rarity && RARITY_COLORS?.[rarity];
 
   const rarityStyle = isGradient
     ? {
@@ -128,18 +164,49 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
         fontWeight: 'bold',
       };
 
+  const getCurrentPrice = () => {
+    if (!priceHistory || priceHistory.length === 0) return 'Prix non disponible';
+    const currentPrice = priceHistory.find(p => p.day === 1)?.price;
+    return currentPrice ? `$${currentPrice}` : 'Prix non disponible';
+  };
+
+  const getPriceStats = () => {
+    if (!priceHistory || priceHistory.length === 0) {
+      return { max: 0, min: 0, avg: 0 };
+    }
+
+    const prices = priceHistory.map(d => parseFloat(d.price));
+    const max = Math.max(...prices);
+    const min = Math.min(...prices);
+    const avg = (max + min) / 2;
+
+    return { max, min, avg };
+  };
+
+  const { max, min, avg } = getPriceStats();
+
   return (
     <div className="page-container">
       <div className="card-detail-container">
         <button className="back-button" onClick={onBack}>
           <span className="back-icon">←</span> Retour à ma collection
         </button>
+        <button
+          className="favorite-button"
+          onClick={() => onAddFavorite(card.id)}
+        >
+          <span className="favorite-icon">⭐</span> Ajouter aux favoris
+        </button>
 
-        <h1 className="card-detail-title">{card?.name || 'Carte Pokémon'}</h1>
+
+        <h1 className="card-detail-title">{card.name || 'Carte Pokémon'}</h1>
 
         <div className="card-detail-content">
           <div className="card-image-container">
-            <TCGCard src={getImageUrl(card)} alt={card?.name || 'Carte Pokémon'} />
+            <TCGCard
+              src={getImageUrl(card)}
+              alt={card.name || 'Carte Pokémon'}
+            />
           </div>
 
           <div className="card-info-container">
@@ -165,9 +232,9 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
                     <span>Jour 1</span>
                   </div>
                   <div className="price-range">
-                    <span>${Math.max(...priceHistory.map(d => parseFloat(d.price))).toFixed(2)}</span>
-                    <span>${((Math.max(...priceHistory.map(d => parseFloat(d.price))) + Math.min(...priceHistory.map(d => parseFloat(d.price)))) / 2).toFixed(2)}</span>
-                    <span>${Math.min(...priceHistory.map(d => parseFloat(d.price))).toFixed(2)}</span>
+                    <span>${max.toFixed(2)}</span>
+                    <span>${avg.toFixed(2)}</span>
+                    <span>${min.toFixed(2)}</span>
                   </div>
                 </div>
               ) : (
@@ -189,11 +256,7 @@ const CardDetailComponent = ({ card, onBack = () => {} }) => {
               <div className="stat-card">
                 <h3 className="stat-title">PRIX ACTUEL</h3>
                 <p className="stat-value price-value">
-                  {
-                   priceHistory.length > 0
-                    ? `$${priceHistory.find(p => p.day === 1)?.price || '...'}`
-                    : 'Prix non disponible'
-                  }
+                  {getCurrentPrice()}
                 </p>
               </div>
               <div className="stat-card">

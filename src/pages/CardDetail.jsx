@@ -6,7 +6,6 @@ import api from '../api';
 import '../styles/CardDetail.css';
 import '../components/TCGCard';
 
-
 if (!customElements.get('tcg-card')) {
   import('../components/TCGCard').then(() => {
     console.log('TCGCard custom element registered in CardDetail');
@@ -19,6 +18,21 @@ const CardDetail = () => {
   const [card, setCard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const handleAddFavorite = async (cardId) => {
+  console.log('Card ID:', cardId); // Log l'ID pour vérifier
+  try {
+    const res = await api.get('/api/favorites/');
+    const fav = res.data.find(f => f.card.id === cardId);
+    if (!fav) {
+      await api.post('/api/favorites/', { card_id: cardId });
+      alert("Favori ajouté avec succès!");
+    }
+  } catch (error) {
+    console.error('Erreur lors de l’ajout du favori:', error);
+    alert("Erreur lors de l'ajout du favori.");
+  }
+};
 
   useEffect(() => {
     const fetchCardDetails = async () => {
@@ -68,7 +82,7 @@ const CardDetail = () => {
   return (
     <>
       <PriceChartGradient />
-      <CardDetailComponent card={card} onBack={handleBack} />
+      <CardDetailComponent card={card} onBack={handleBack} onAddFavorite={handleAddFavorite} />
     </>
   );
 };

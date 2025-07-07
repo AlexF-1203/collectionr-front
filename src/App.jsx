@@ -12,7 +12,8 @@ import CardDetail from "./pages/CardDetail";
 import Profile from './pages/Profile';
 import News from './pages/News';
 import AuthCallback from './components/AuthCallback';
-import Settings from './components/Settings'; // n'oublie pas cette ligne
+import Settings from './components/Settings';
+import FadeInSection from './components/FadeInSection';
 import './components/TCGCard';
 import './styles/TCGCard.css';
 import { ACCESS_TOKEN } from './constants';
