@@ -9,6 +9,7 @@ import Navbar from './components/Navbar';
 import PokemonCollection from './components/PokemonCollection';
 import Cards from './pages/Cards';
 import CardDetail from "./pages/CardDetail";
+import Collections from './pages/Collections';
 import Profile from './pages/Profile';
 import News from './pages/News';
 import AuthCallback from './components/AuthCallback';
@@ -52,7 +53,7 @@ function App() {
         <Route path="/logout" element={<Logout />} />
         <Route path="/register" element={<Register route="api/user/register/" method="register" />} />
         <Route path="/auth-callback" element={<AuthCallback />} />
-        <Route path="/collection" element={<ProtectedRoute><PokemonCollection /></ProtectedRoute>} />
+        <Route path="/collections" element={<ProtectedRoute><Collections /></ProtectedRoute>} />
         <Route path="/cards" element={<ProtectedRoute><Cards /></ProtectedRoute>} />
         <Route path="/cards/:id" element={<ProtectedRoute><CardDetail /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />

@@ -55,7 +55,7 @@ const Navbar = ({ onOpenSettings }) => {
         <ul className="nav-links">
           <Link to="/" className="nav-item">Acceuil</Link>
           <Link to="/cards" className="nav-item">Cartes</Link>
-          <Link to="/news" className="nav-item">Actualités</Link>
+          <Link to="/collections" className="nav-item">Collection</Link>
         </ul>
         <SearchBar />
       </div>

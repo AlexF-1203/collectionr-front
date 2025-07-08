@@ -20,7 +20,9 @@ const SearchBar = () => {
         const res = await api.get('/api/cards/search/', {
           params: { q: input }
         });
-        setSuggestions(res.data.slice(0, 10));
+        // Gérer la réponse paginée
+        const results = res.data.results || res.data || [];
+        setSuggestions(results.slice(0, 10));
         setShowSuggestions(true);
       } catch (err) {
         console.error('Erreur suggestions :', err);

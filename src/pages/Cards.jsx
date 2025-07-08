@@ -9,7 +9,7 @@ const Cards = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [allCards, setAllCards] = useState([]);
+  // SUPPRIMÉ allCards - plus besoin !
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [, setError] = useState(null);
@@ -25,89 +25,76 @@ const Cards = () => {
   });
 
   const [availableSets, setAvailableSets] = useState([]);
+  const [availableRarities, setAvailableRarities] = useState([]);
 
-  const fetchCards = async () => {
+   const fetchCards = async (page = 1, filters = {}) => {
+    const params = new URLSearchParams();
+    params.append("page", page);
+    params.append("limit", cardsPerPage);
+
+    if (filters.name) params.append("q", filters.name);
+    if (filters.set !== "all") params.append("set", filters.set);
+    if (filters.rarity !== "all") params.append("rarity", filters.rarity);
+
     try {
-      const res = await api.get('/api/cards/');
-      return Array.isArray(res.data) ? res.data : res.data.results || [];
+      const res = await api.get(`/api/cards/?${params.toString()}`);
+      return {
+        results: res.data.results || [],
+        count: res.data.count || 0
+      };
     } catch (err) {
-      const fallback = await api.get('/pokemon/cards/');
-      return Array.isArray(fallback.data) ? fallback.data : fallback.data.results || [];
+      console.error("Erreur :", err);
+      return { results: [], count: 0 };
     }
   };
 
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
+      const data = await fetchCards(currentPage, filters);
+      setCards(data.results);
+      setTotalPages(Math.ceil(data.count / cardsPerPage));
+      setLoading(false);
+    };
+    loadData();
+  }, [currentPage, filters]);
+
+  // Charger les sets et raretés disponibles au démarrage
+  useEffect(() => {
+    const loadFilters = async () => {
       try {
-        const data = await fetchCards();
-        setAllCards(data);
+        // Charger les sets depuis le nouveau endpoint
+        const setsRes = await api.get('/api/cards/sets/');
+        console.log("Sets chargés:", setsRes.data);
+        setAvailableSets(setsRes.data || []);
 
-        const nameInURL = new URLSearchParams(location.search).get("name") || "";
-        setFilters(prev => ({ ...prev, name: nameInURL }));
+        // Charger les raretés depuis le nouveau endpoint
+        const raritiesRes = await api.get('/api/cards/rarities/');
+        console.log("Raretés chargées:", raritiesRes.data);
+        setAvailableRarities(raritiesRes.data || []);
 
-        setTotalPages(Math.ceil(data.length / cardsPerPage));
-
-        const uniqueSets = [...new Set(
-          data.map(card => {
-            if (typeof card.set === 'object' && card.set?.title) return card.set.title;
-            if (typeof card.set === 'string') return card.set;
-            return card.set_name || "Set inconnu";
-          })
-        )].map(name => ({ id: name, name }));
-
-        setAvailableSets(uniqueSets);
-        setError(null);
       } catch (err) {
-        setError("Erreur de chargement des cartes");
-      } finally {
-        setLoading(false);
+        console.error("Erreur chargement filtres:", err);
       }
     };
+    loadFilters();
+  }, []);
 
-    loadData();
+  // Gérer les paramètres URL (ex: /cards?name=pikachu)
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const nameParam = urlParams.get('name');
+
+    if (nameParam) {
+      setFilters(prev => ({ ...prev, name: nameParam }));
+      setCurrentPage(1);
+    }
   }, [location.search]);
-
-  useEffect(() => {
-    if (!loading) {
-      const allRarities = [...new Set(allCards.map(card => card.rarity))];
-      console.log("Raretés détectées :", allRarities);
-    }
-  }, [loading, allCards]);
-
-  useEffect(() => {
-    let filtered = [...allCards];
-
-    if (filters.name && filters.name.trim() !== '') {
-      filtered = filtered.filter(card =>
-        card.name?.toLowerCase().includes(filters.name.toLowerCase().trim())
-      );
-    }
-
-    if (filters.set !== 'all') {
-      filtered = filtered.filter(card =>
-        String(card.set?.title) === String(filters.set)
-      );
-    }
-
-    if (filters.rarity !== 'all') {
-      filtered = filtered.filter(card => card.rarity === filters.rarity);
-    }
-
-    const newTotalPages = Math.ceil(filtered.length / cardsPerPage);
-    setTotalPages(newTotalPages);
-
-    const validPage = currentPage > newTotalPages ? 1 : currentPage;
-    const start = (validPage - 1) * cardsPerPage;
-    const end = start + cardsPerPage;
-    setCards(filtered.slice(start, end));
-
-    if (currentPage !== validPage) setCurrentPage(validPage);
-  }, [filters, currentPage, allCards]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters(prev => ({ ...prev, [name]: value }));
+    setCurrentPage(1); // Retour page 1 quand on change un filtre
   };
 
   const handlePageChange = (page) => {
@@ -206,10 +193,10 @@ const Cards = () => {
             <option value="all">Tous les Sets</option>
             {availableSets.map(set => (
               <option
-                key={typeof set.id === 'string' ? set.id : JSON.stringify(set.id)}
-                value={typeof set.id === 'string' ? set.id : ''}
+                key={set.id}
+                value={set.title}
               >
-                {typeof set.name === 'string' ? set.name : 'Nom invalide'}
+                {set.title}
               </option>
             ))}
           </select>
@@ -224,13 +211,11 @@ const Cards = () => {
             onChange={handleFilterChange}
           >
             <option value="all">Toutes les Raretés</option>
-            {[...new Set(allCards.map(card => card.rarity))]
-              .filter(r => !!r)
-              .map(rarity => (
-                <option key={rarity} value={rarity}>
-                  {rarity}
-                </option>
-              ))}
+            {availableRarities.map(rarity => (
+              <option key={rarity} value={rarity}>
+                {rarity}
+              </option>
+            ))}
           </select>
         </div>
 
