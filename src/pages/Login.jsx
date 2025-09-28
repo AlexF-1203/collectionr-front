@@ -40,6 +40,11 @@ const Login = () => {
 
   return (
     <div className="login-container">
+      {loading && (
+      <div className="loading-overlay">
+        <LoadingIndicator />
+      </div>
+       )}
       <div className="login-form">
         <h2>Login</h2>
         <form onSubmit={handleSubmit}>
@@ -57,7 +62,6 @@ const Login = () => {
               placeholder="Password"
             />
           </div>
-          {loading && <LoadingIndicator />}
           <div className="form-actions">
             <button type="submit" className="button-shine">Login</button>
             <Googleauth />

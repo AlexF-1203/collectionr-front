@@ -20,7 +20,7 @@ const CardDetail = () => {
   const [error, setError] = useState(null);
 
   const handleAddFavorite = async (cardId) => {
-  console.log('Card ID:', cardId); // Log l'ID pour vérifier
+  console.log('Card ID:', cardId);
   try {
     const res = await api.get('/api/favorites/');
     const fav = res.data.find(f => f.card.id === cardId);

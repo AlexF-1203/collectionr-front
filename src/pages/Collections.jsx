@@ -69,7 +69,7 @@ const CollectionPage = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
-
+      console.log(response.data)
       setResult(response.data);
       setCurrentStep('Analyse terminée !');
       setProgress(100);
@@ -151,7 +151,7 @@ const CollectionPage = () => {
               <div className="card-frame">
                 <div className="card-item">
                   <img
-                    src={`/images/cards/${result.matched_card_id}.jpg`}
+                    src={result.card_info.image_url}
                     alt={result.card_info.name}
                     className="card-image"
                   />
@@ -162,7 +162,7 @@ const CollectionPage = () => {
                   <p className="card-rarity">{result.card_info.rarity}</p>
                   <p className="card-rarity">#{result.card_info.number}</p>
                   <p className="card-rarity">{result.card_info.price} €</p>
-                  <p className="card-rarity">Score : {(result.similarity_score * 100).toFixed(2)}%</p>
+                  <p className="card-rarity">Score : {Math.min((result.similarity_score * 100), 100).toFixed(2)}%</p>
 
                   {result.performance && (
                     <div className="performance-info">
